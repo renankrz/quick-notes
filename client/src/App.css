@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background-color: black;
+  overflow-y: scroll;
+}
+
+.dark-bg {
+  background-color: #36333A;
+}
+
+.light-bg {
+  /* background-color: #6e304b; */
+  background-color: #36333A;
+}
+
+.app {
+  display: flex;
+}

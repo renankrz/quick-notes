@@ -1,0 +1,13 @@
+.left-menu {
+  position: fixed;
+  width: 280px;
+  height: 100%;
+  padding: 20px;
+}
+
+.left-menu h1 {
+  margin-bottom: 32px;
+  color: yellow;
+  font-family: monospace;
+  font-size: 20px;
+}

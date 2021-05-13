@@ -1,0 +1,110 @@
+.card {
+  margin: 0 auto 20px auto;
+  padding: 16px;
+  font-family: monospace;
+  background-color: #F5F5F5;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.title-container {
+  padding-bottom: 16px;
+  border-bottom: 1px solid grey;
+}
+
+.group {
+  font-size: 20px;
+  font-weight: bold;
+  color: #666;
+}
+
+.title {
+  font-size: 18px;
+  color: darkred;
+}
+
+.markdown {
+  margin-top: 16px;
+  font-size: 16px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6,
+.markdown p,
+.markdown ol,
+.markdown ul,
+.markdown-code
+{
+  margin-bottom: 10px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6
+{
+  margin-top: 20px;
+  font-family: sans-serif;
+}
+
+.markdown p,
+.markdown li
+{
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+.markdown ol {
+  margin-left: 21px;
+}
+
+.markdown ul {
+  margin-left: 16px;
+}
+
+.markdown h1 code,
+.markdown h2 code,
+.markdown h3 code,
+.markdown h4 code,
+.markdown h5 code,
+.markdown h6 code,
+.markdown p code {
+  background-color: #DDD;
+  padding: 0 5px;
+  border-radius: 5px;
+  font-weight: normal;
+}
+
+.markdown-code {
+  border-radius: 5px;
+  overflow: hidden;
+  line-height: 20px;
+}
+
+/* overwrite styles defined by react-syntax-highlighter */
+.linenumber {
+  position: relative;
+  top: 1px;
+  /* overwrite inline styles */
+  min-width: 2.25em !important;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.buttons-container img {
+  padding-left: 5px;
+}
+
+.buttons-container img:hover {
+  cursor: pointer;
+}

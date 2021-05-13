@@ -1,0 +1,68 @@
+/* MENU */
+
+.menu-button {
+  padding: 6px 0 6px 20px;
+  margin-bottom: 14px;
+  background-color: #666;
+  user-select: none;
+  border-radius: 15px;
+}
+
+.menu-button h2 {
+  font-family: monospace;
+  font-size: 20px;
+  color: #f2ecff
+}
+
+.menu-button:hover {
+  background-color: black;
+  cursor: pointer;
+}
+
+.menu-button-active {
+  background-color: yellow;
+}
+
+.menu-button-active h2 {
+  color: black;
+}
+
+.menu-button-active:hover {
+  background-color: yellow;
+  /* cursor: default; */
+}
+
+/* GROUP */
+
+.group-button {
+  padding: 6px 0 6px 20px;
+  margin-bottom: 10px;
+  background-color: #666;
+  user-select: none;
+  border-radius: 15px;
+}
+
+.group-button h2 {
+  color: #f2ecff;
+  font-family: monospace;
+  font-weight: normal;
+  font-size: 18px;
+}
+
+.group-button:hover {
+  background-color: black;
+  cursor: pointer;
+}
+
+.group-button-active {
+  background-color: yellow;
+}
+
+.group-button-active h2 {
+  color: black;
+}
+
+.group-button-active:hover {
+  background-color: yellow;
+  cursor: default;
+}
