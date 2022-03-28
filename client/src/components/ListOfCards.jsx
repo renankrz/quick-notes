@@ -9,6 +9,7 @@ import './ListOfCards.css';
 const ListOfCards = ({ notesList, onClickUpdate, onClickDelete }) => (
   <div className="list-of-cards">
     {notesList.map((note) => (
+      note && (
       <Card
         key={note._id}
         id={note._id}
@@ -18,7 +19,7 @@ const ListOfCards = ({ notesList, onClickUpdate, onClickDelete }) => (
         onClickUpdate={onClickUpdate}
         onClickDelete={onClickDelete}
       />
-    ))}
+      )))}
   </div>
 );
 
