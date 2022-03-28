@@ -7,7 +7,7 @@ const notes = require('./api/notes');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost/quick-notes', {
+mongoose.connect('mongodb://localhost/quickNotesDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
