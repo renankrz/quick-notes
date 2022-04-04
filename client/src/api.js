@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:1337';
+const API_URL = 'http://localhost:1338';
 
 export async function noteCreate(note) {
   const response = await fetch(`${API_URL}/api/notes`, {
