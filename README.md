@@ -1,6 +1,6 @@
 # Quick notes
 
-CRUD notes for studying. Supports Markdown and LaTeX.
+CRUD notes for studying. Supports basic Markdown and basic LaTeX.
 
 - Run
   - [Run once](#run-once)
@@ -86,14 +86,14 @@ The app is now available in http://localhost:3000/ at every system boot.
 
 ## Markdown
 
-Just type regular markdown. Most of it should work...
+Just type regular markdown.
 
 ## LaTeX
 
-Add LaTeX code between "$$" and "$$", as in
+Add LaTeX code between "$" and "$", as in
 
 ```
-$$
+$
 L = \frac{1}{2} \rho v^2 S C_L
-$$
+$
 ```
