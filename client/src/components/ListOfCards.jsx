@@ -15,6 +15,7 @@ const ListOfCards = ({ notesList, onClickUpdate, onClickDelete }) => (
         id={note._id}
         group={note.group}
         title={note.title}
+        rank={note.rank}
         markdown={note.markdown}
         onClickUpdate={onClickUpdate}
         onClickDelete={onClickDelete}
@@ -25,10 +26,11 @@ const ListOfCards = ({ notesList, onClickUpdate, onClickDelete }) => (
 
 ListOfCards.propTypes = {
   notesList: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string,
-    group: PropTypes.string,
-    title: PropTypes.string,
-    markdown: PropTypes.string,
+    _id: PropTypes.string.isRequired,
+    group: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    rank: PropTypes.number.isRequired,
+    markdown: PropTypes.string.isRequired,
   })).isRequired,
   onClickUpdate: PropTypes.func.isRequired,
   onClickDelete: PropTypes.func.isRequired,

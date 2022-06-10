@@ -6,6 +6,7 @@ const noteSchema = new Schema({
   group: String,
   title: String,
   markdown: String,
+  rank: Number,
 });
 
 const Note = mongoose.model('Note', noteSchema);

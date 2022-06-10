@@ -61,12 +61,13 @@ const Main = ({ selectedGroup, onUpdateGroups }) => {
     readAllNotes();
   };
 
-  const clickUpdate = (noteId, noteGroup, noteTitle, noteMarkdown) => {
+  const clickUpdate = (noteId, noteGroup, noteTitle, noteRank, noteMarkdown) => {
     setMode('update');
     setNoteToUpdate({
       id: noteId,
       group: noteGroup,
       title: noteTitle,
+      rank: noteRank,
       markdown: noteMarkdown,
     });
   };

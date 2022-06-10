@@ -51,7 +51,7 @@ router.get('/:group/random', async (req, res, next) => {
 // readAllNotes
 router.get('/', async (req, res, next) => {
   try {
-    const notes = await Note.find();
+    const notes = await Note.find().sort({ rank: 'asc' });
     res.json(notes);
   } catch (error) {
     next(error);
@@ -61,7 +61,7 @@ router.get('/', async (req, res, next) => {
 // readAllNotesFromGroup
 router.get('/:group', async (req, res, next) => {
   try {
-    const notes = await Note.find({ group: req.params.group });
+    const notes = await Note.find({ group: req.params.group }).sort({ rank: 'asc' });
     res.json(notes);
   } catch (error) {
     next(error);

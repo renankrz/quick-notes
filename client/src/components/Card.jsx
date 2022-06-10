@@ -11,16 +11,19 @@ import updateImg from '../img/update.svg';
 import deleteImg from '../img/delete.svg';
 
 const Card = ({
-  id, group, title, markdown, onClickUpdate, onClickDelete,
+  id, group, title, rank, markdown, onClickUpdate, onClickDelete,
 }) => (
   <div className="card">
     <div className="title-container">
       <span className="group">
         {`[${group}]`}
-        :&nbsp;
+        &nbsp;
       </span>
       <span className="title">
         {title}
+      </span>
+      <span className="rank">
+        {rank}
       </span>
     </div>
     <MarkdownBlock markdown={markdown} />
@@ -30,7 +33,7 @@ const Card = ({
         className="button"
         role="button"
         alt="update"
-        onClick={() => onClickUpdate(id, group, title, markdown)}
+        onClick={() => onClickUpdate(id, group, title, rank, markdown)}
       />
       <img
         src={deleteImg}
@@ -47,6 +50,7 @@ Card.propTypes = {
   id: PropTypes.string.isRequired,
   group: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  rank: PropTypes.number.isRequired,
   markdown: PropTypes.string.isRequired,
   onClickUpdate: PropTypes.func.isRequired,
   onClickDelete: PropTypes.func.isRequired,

@@ -8,6 +8,8 @@
 }
 
 .title-container {
+  display: flex;
+  align-items: baseline;
   padding-bottom: 16px;
   border-bottom: 1px solid grey;
 }
@@ -21,6 +23,13 @@
 .title {
   font-size: 18px;
   color: darkred;
+}
+
+.rank {
+  color: #666;
+  flex-grow: 1;
+  font-size: 18px;
+  text-align: right;
 }
 
 .markdown {

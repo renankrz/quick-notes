@@ -49,6 +49,13 @@ const Form = ({ noteData, text, submit }) => {
         </div>
 
         <div className="field">
+          <label htmlFor="rank">
+            <p className="label">Rank</p>
+            <input type="text" id="title" name="title" {...register('rank')} />
+          </label>
+        </div>
+
+        <div className="field">
           <label htmlFor="markdown">
             <p className="label">Markdown</p>
             <textarea id="markdown" name="markdown" {...register('markdown')} />
@@ -67,9 +74,10 @@ const Form = ({ noteData, text, submit }) => {
 
 Form.propTypes = {
   noteData: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.string,
     group: PropTypes.string,
     title: PropTypes.string,
+    rank: PropTypes.number,
     markdown: PropTypes.string,
   }),
   text: PropTypes.string.isRequired,
@@ -81,6 +89,7 @@ Form.defaultProps = {
     id: '',
     group: '',
     title: '',
+    rank: 0,
     markdown: '',
   },
 };
