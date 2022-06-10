@@ -1,8 +1,4 @@
-# modules
-*/node_modules
-
-# build
-*/build
-
-# rest client
+node_modules
+build
 *.http
+*.env

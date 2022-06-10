@@ -1,13 +1,13 @@
-const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
+const express = require('express');
 const mongoose = require('mongoose');
-
+const morgan = require('morgan');
+require('dotenv').config();
 const notes = require('./api/notes');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost/quickNotesDB', {
+mongoose.connect(`${process.env.DB_HOST}${process.env.DB_NAME}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -19,4 +19,4 @@ app.use(morgan('dev'));
 
 app.use('/api/notes', notes);
 
-app.listen(1338);
+app.listen(process.env.API_PORT);

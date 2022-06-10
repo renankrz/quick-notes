@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:1338';
+const API_URL = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`;
 
 export async function noteCreate(note) {
   const response = await fetch(`${API_URL}/api/notes`, {
