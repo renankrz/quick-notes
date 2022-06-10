@@ -1,16 +1,18 @@
 /* MENU */
 
 .menu-button {
-  padding: 6px 0 6px 20px;
+  padding: 7px 0 7px 20px;
   margin-bottom: 14px;
-  background-color: #666;
+  background-color: transparent;
+  border: 1px solid #666;
   user-select: none;
-  border-radius: 15px;
+  border-radius: 4px;
 }
 
 .menu-button h2 {
-  font-family: monospace;
+  font-family: sans-serif;
   font-size: 20px;
+  font-weight: normal;
   color: #f2ecff
 }
 
@@ -20,7 +22,8 @@
 }
 
 .menu-button-active {
-  background-color: yellow;
+  background-color: lightpink;
+  border: 1px solid transparent;
 }
 
 .menu-button-active h2 {
@@ -28,23 +31,23 @@
 }
 
 .menu-button-active:hover {
-  background-color: yellow;
-  /* cursor: default; */
+  background-color: lightcoral;
 }
 
 /* GROUP */
 
 .group-button {
-  padding: 6px 0 6px 20px;
+  padding: 8px 0 8px 20px;
   margin-bottom: 10px;
-  background-color: #666;
+  background-color: transparent;
+  border: 1px solid #667;
   user-select: none;
-  border-radius: 15px;
+  border-radius: 4px;
 }
 
 .group-button h2 {
   color: #f2ecff;
-  font-family: monospace;
+  font-family: sans-serif;
   font-weight: normal;
   font-size: 18px;
 }
@@ -55,7 +58,8 @@
 }
 
 .group-button-active {
-  background-color: yellow;
+  background-color: lightpink;
+  border: 1px solid transparent;
 }
 
 .group-button-active h2 {
@@ -63,6 +67,6 @@
 }
 
 .group-button-active:hover {
-  background-color: yellow;
+  background-color: lightcoral;
   cursor: default;
 }

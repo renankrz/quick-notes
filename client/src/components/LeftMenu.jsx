@@ -8,7 +8,6 @@ import './LeftMenu.css';
 // eslint-disable-next-line no-unused-vars
 const LeftMenu = ({ groups, selectedGroup, onClickGroup }) => (
   <div className="left-menu dark-bg">
-    <h1>#include</h1>
     {groups.map((group) => (
       <Button
         key={group}

@@ -90,17 +90,17 @@ const Main = ({ selectedGroup, onUpdateGroups }) => {
       <div className="main light-bg">
         <div className="menu-buttons-container">
           <Button
-            text="CREATE NEW"
+            text="Create new"
             cssClasses={`menu-button ${mode === 'create' && 'menu-button-active'}`}
             onClick={clickCreate}
           />
           <Button
-            text="GET ALL"
+            text="Get all"
             cssClasses={`menu-button ${mode === 'all' && 'menu-button-active'}`}
             onClick={clickAll}
           />
           <Button
-            text="GET RANDOM"
+            text="Get random"
             cssClasses={`menu-button ${mode === 'random' && 'menu-button-active'}`}
             onClick={clickRandom}
           />
