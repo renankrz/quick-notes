@@ -3,7 +3,7 @@ const Note = require('../models/Note');
 
 const router = Router();
 
-// createNote
+// Create note
 router.post('/', async (req, res, next) => {
   try {
     const note = new Note(req.body);
@@ -14,7 +14,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// readGroups
+// Read Groups
 router.get('/groups', async (req, res, next) => {
   try {
     const distinctGroups = await Note.distinct('group');
@@ -24,7 +24,7 @@ router.get('/groups', async (req, res, next) => {
   }
 });
 
-// readRandomNote
+// Read random note
 router.get('/random', async (req, res, next) => {
   try {
     const count = await Note.countDocuments();
@@ -36,7 +36,7 @@ router.get('/random', async (req, res, next) => {
   }
 });
 
-// readRandomNoteFromGroup
+// Read random note from group
 router.get('/:group/random', async (req, res, next) => {
   try {
     const count = await Note.find({ group: req.params.group }).countDocuments();
@@ -48,7 +48,7 @@ router.get('/:group/random', async (req, res, next) => {
   }
 });
 
-// readAllNotes
+// Read all notes
 router.get('/', async (req, res, next) => {
   try {
     const notes = await Note.find().sort({ rank: 'asc' });
@@ -58,7 +58,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// readAllNotesFromGroup
+// Read all notes from group
 router.get('/:group', async (req, res, next) => {
   try {
     const notes = await Note.find({ group: req.params.group }).sort({ rank: 'asc' });
@@ -68,7 +68,7 @@ router.get('/:group', async (req, res, next) => {
   }
 });
 
-// updateNote
+// Update note
 router.put('/:id', async (req, res, next) => {
   try {
     const updatedNote = await Note.findByIdAndUpdate(
@@ -81,7 +81,7 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-// deleteNote
+// Delete note
 router.delete('/:id', async (req, res, next) => {
   try {
     const deletedNote = await Note.findByIdAndDelete(req.params.id);
