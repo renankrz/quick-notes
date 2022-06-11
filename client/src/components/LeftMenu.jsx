@@ -5,7 +5,6 @@ import Button from './Button';
 
 import './LeftMenu.css';
 
-// eslint-disable-next-line no-unused-vars
 const LeftMenu = ({ groups, selectedGroup, onClickGroup }) => (
   <div className="left-menu dark-bg">
     {groups.map((group) => (
