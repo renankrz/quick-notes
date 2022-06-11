@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-
 import Button from './Button';
 import Form from './Form';
 import Header from './Header';
 import ListOfCards from './ListOfCards';
-
 import {
   noteCreate, noteRead, noteUpdate, noteDelete,
 } from '../api';
-
 import './Main.css';
 
 const Main = ({ selectedGroup, onUpdateGroups }) => {

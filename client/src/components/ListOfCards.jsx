@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import Card from './Card';
-
 import './ListOfCards.css';
 
 const ListOfCards = ({ notesList, onClickUpdate, onClickDelete }) => (

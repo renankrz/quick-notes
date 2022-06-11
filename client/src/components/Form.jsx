@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-
 import './Form.css';
 
 const Form = ({ noteData, text, submit }) => {

@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import MarkdownBlock from './MarkdownBlock';
-
 import './Card.css';
-
 import updateImg from '../img/update.svg';
 import deleteImg from '../img/delete.svg';
 

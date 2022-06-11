@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
 import LeftMenu from './components/LeftMenu';
 import Main from './components/Main';
-
 import { groupRead } from './api';
-
 import './App.css';
 
 const App = () => {
