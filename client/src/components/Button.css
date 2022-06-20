@@ -4,7 +4,7 @@
   padding: 7px 0 7px 20px;
   margin-bottom: 14px;
   background-color: transparent;
-  border: 1px solid #666;
+  border: 1px solid dimgrey;
   user-select: none;
   border-radius: 4px;
 }
@@ -37,10 +37,9 @@
 /* GROUP */
 
 .group-button {
-  padding: 8px 0 8px 20px;
-  margin-bottom: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
   background-color: transparent;
-  border: 1px solid #667;
   user-select: none;
   border-radius: 4px;
 }
@@ -49,7 +48,7 @@
   color: #f2ecff;
   font-family: sans-serif;
   font-weight: normal;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .group-button:hover {
@@ -57,16 +56,10 @@
   cursor: pointer;
 }
 
-.group-button-active {
-  background-color: lightpink;
-  border: 1px solid transparent;
-}
-
 .group-button-active h2 {
-  color: black;
+  color: lightpink;
 }
 
 .group-button-active:hover {
-  background-color: lightcoral;
   cursor: default;
 }
