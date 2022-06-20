@@ -1,4 +1,5 @@
-node_modules
 build
+dump
+node_modules
 *.http
 *.env
