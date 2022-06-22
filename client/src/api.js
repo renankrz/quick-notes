@@ -69,7 +69,7 @@ export async function noteDelete(id) {
   return response.json();
 }
 
-export async function groupRead() {
+export async function groupsRead() {
   const response = await fetch(`${API_URL}/api/notes/groups`);
   return response.json();
 }

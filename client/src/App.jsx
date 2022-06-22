@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LeftMenu from './components/LeftMenu';
 import Main from './components/Main';
-import { groupRead } from './api';
+import { groupsRead } from './api';
 import './App.css';
 
 const App = () => {
@@ -9,7 +9,7 @@ const App = () => {
   const [selectedGroup, setSelectedGroup] = useState('All');
 
   const updateGroups = async () => {
-    const readGroups = await groupRead();
+    const readGroups = await groupsRead();
     setGroups(['All', ...readGroups]);
   };
 
