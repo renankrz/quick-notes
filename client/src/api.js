@@ -70,6 +70,6 @@ export async function noteDelete(id) {
 }
 
 export async function groupsRead() {
-  const response = await fetch(`${API_URL}/api/notes/groups`);
+  const response = await fetch(`${API_URL}/api/groups`);
   return response.json();
 }
