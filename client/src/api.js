@@ -1,4 +1,4 @@
-const API_URL = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`;
+const API_URL = `${import.meta.env.VITE_API_HOST}:${import.meta.env.VITE_API_PORT}`;
 
 export async function noteCreate(note) {
   const response = await fetch(`${API_URL}/api/notes`, {

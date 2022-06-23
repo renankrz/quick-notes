@@ -9,11 +9,17 @@ const App = () => {
   const [selectedGroup, setSelectedGroup] = useState('All');
 
   const updateGroups = async () => {
-    const readGroups = await groupsRead();
-    setGroups(['All', ...readGroups]);
+    const response = await groupsRead();
+    setGroups(['All', ...response]);
   };
 
-  useEffect(updateGroups, []);
+  useEffect(() => {
+    async function firstUpdateGroups() {
+      const response = await groupsRead();
+      setGroups(['All', ...response]);
+    }
+    firstUpdateGroups();
+  }, []);
 
   return (
     <div className="app">
