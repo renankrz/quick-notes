@@ -14,11 +14,12 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// Read Groups
-router.get('/groups', async (req, res, next) => {
+// Create multiple notes
+router.post('/multiple', async (req, res, next) => {
+  const notes = req.body;
   try {
-    const distinctGroups = await Note.distinct('group');
-    res.json(distinctGroups);
+    const createdNotes = await Note.insertMany(notes);
+    res.json(createdNotes);
   } catch (error) {
     next(error);
   }
