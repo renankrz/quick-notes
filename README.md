@@ -73,7 +73,7 @@ Start the client:
 
 ```shell
 $ cd client
-$ pm2 serve build 3000 --name client
+$ pm2 serve dist 3000 --name client
 ```
 
 Freeze the processes so PM2 launch them at system boot:

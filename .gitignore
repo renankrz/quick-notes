@@ -1,4 +1,4 @@
-build
+dist
 dump
 node_modules
 *.http
