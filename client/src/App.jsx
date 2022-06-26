@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import LeftMenu from './components/LeftMenu';
 import Main from './components/Main';
 import { groupsRead } from './api';
@@ -8,20 +9,16 @@ const App = () => {
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState('All');
 
-  const updateGroups = async () => {
-    const response = await groupsRead();
-    setGroups(['All', ...response]);
-  };
+  const { isLoading } = useQuery('updateGroups', groupsRead, {
+    onSuccess: (data) => {
+      setGroups(['All', ...data]);
+    },
+  });
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    async function firstUpdateGroups() {
-      const response = await groupsRead();
-      setGroups(['All', ...response]);
-    }
-    firstUpdateGroups();
-  }, []);
-
-  return (
+  return isLoading ? (
+    <h1>Loading</h1>
+  ) : (
     <div className="app">
       <LeftMenu
         groups={groups}
@@ -30,7 +27,7 @@ const App = () => {
       />
       <Main
         selectedGroup={selectedGroup}
-        onUpdateGroups={updateGroups}
+        onUpdateGroups={() => queryClient.invalidateQueries('updateGroups')}
       />
     </div>
   );
