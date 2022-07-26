@@ -15,7 +15,9 @@ mongoose.connect(`${process.env.DB_HOST}${process.env.DB_NAME}`, {
 mongoose.set('useFindAndModify', false);
 
 const corsOptions = {
-  origin: [`http://localhost:${process.env.CLIENT_PORT}`],
+  origin: process.env.ALLOWED_ORIGINS.split(',').map((origin) => (
+    `http://${origin}:${process.env.CLIENT_PORT}`
+  )),
 };
 
 app.use(express.json());
