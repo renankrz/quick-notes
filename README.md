@@ -1,6 +1,8 @@
 # Quick notes
 
-CRUD notes for studying. Supports basic Markdown and basic LaTeX.
+CRUD notes for studying. Supports Markdown and LaTeX.
+
+![Quick Notes interface](/screenshot.png?raw=true "Quick Notes interface")
 
 - Run
   - [Run once](#run-once)
