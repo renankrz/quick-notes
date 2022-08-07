@@ -6,16 +6,16 @@ const { withErrorHandling } = require('../utils');
 
 const router = Router();
 
-const readAllGroups = async (db) => withErrorHandling(async () => {
+const readAllCategories = async (db) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
-    LET groups = (
+    LET categories = (
       FOR n IN ${notesColl}
-        RETURN DISTINCT n.group
+        RETURN DISTINCT n.category
     )
-    FOR g IN groups
-      SORT g
-      RETURN g      
+    FOR c IN categories
+      SORT c
+      RETURN c
   `);
   const result = await cursor.all();
   return result;
@@ -24,8 +24,8 @@ const readAllGroups = async (db) => withErrorHandling(async () => {
 router.get('/', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbGroups = await readAllGroups(db);
-    res.json(dbGroups);
+    const dbCategories = await readAllCategories(db);
+    res.json(dbCategories);
   } catch (error) {
     next(error);
   }

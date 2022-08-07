@@ -69,11 +69,11 @@ router.get('/random', async (_, res, next) => {
   }
 });
 
-const readRandomNoteFromGroup = async (db, group) => withErrorHandling(async () => {
+const readRandomNoteFromCategory = async (db, category) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
-      FILTER n.group == ${group}
+      FILTER n.category == ${category}
       SORT RAND()
       LIMIT 1
       RETURN n
@@ -82,10 +82,10 @@ const readRandomNoteFromGroup = async (db, group) => withErrorHandling(async () 
   return result[0] || null;
 });
 
-router.get('/:group/random', async (req, res, next) => {
+router.get('/:category/random', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNote = await readRandomNoteFromGroup(db, req.params.group);
+    const dbNote = await readRandomNoteFromCategory(db, req.params.category);
     res.json(dbNote);
   } catch (error) {
     next(error);
@@ -112,21 +112,21 @@ router.get('/', async (_, res, next) => {
   }
 });
 
-const readAllNotesFromGroup = async (db, group) => withErrorHandling(async () => {
+const readAllNotesFromCategory = async (db, category) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
-      FILTER n.group == ${group}
+      FILTER n.category == ${category}
       RETURN n
   `);
   const result = await cursor.all();
   return result;
 });
 
-router.get('/:group', async (req, res, next) => {
+router.get('/:category', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNotes = await readAllNotesFromGroup(db, req.params.group);
+    const dbNotes = await readAllNotesFromCategory(db, req.params.category);
     res.json(dbNotes);
   } catch (error) {
     next(error);
