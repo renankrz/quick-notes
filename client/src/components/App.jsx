@@ -1,9 +1,20 @@
 import React from 'react';
+import Categories from './Categories';
+import NotesAll from './NotesAll';
+import NoteOne from './NoteOne';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Quick Notes</h1>
+    <div>
+      <div>
+        <Categories />
+      </div>
+      <div>
+        <NotesAll />
+      </div>
+      <div>
+        <NoteOne />
+      </div>
     </div>
   );
 }
