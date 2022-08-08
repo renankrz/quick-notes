@@ -1,7 +1,7 @@
-const API_URL = `${import.meta.env.VITE_API_HOST}:${import.meta.env.VITE_API_PORT}`;
+const API_URL = `${import.meta.env.VITE_API_HOST}:${import.meta.env.VITE_API_PORT}/api/notes`;
 
 export async function noteCreate(note) {
-  const response = await fetch(`${API_URL}/api/notes`, {
+  const response = await fetch(`${API_URL}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -12,27 +12,27 @@ export async function noteCreate(note) {
 }
 
 export async function readRandomNote() {
-  const response = await fetch(`${API_URL}/api/notes/random`);
+  const response = await fetch(`${API_URL}/random`);
   return response.json();
 }
 
 export async function readRandomNoteFromCategory(categoryKey) {
-  const response = await fetch(`${API_URL}/api/notes/${categoryKey}/random`);
+  const response = await fetch(`${API_URL}/${categoryKey}/random`);
   return response.json();
 }
 
 export async function readAllNotes() {
-  const response = await fetch(`${API_URL}/api/notes`);
+  const response = await fetch(`${API_URL}`);
   return response.json();
 }
 
 export async function readAllNotesFromCategory(categoryKey) {
-  const response = await fetch(`${API_URL}/api/notes/${categoryKey}`);
+  const response = await fetch(`${API_URL}/${categoryKey}`);
   return response.json();
 }
 
 export async function noteUpdate(key, updates) {
-  const response = await fetch(`${API_URL}/api/notes/${key}`, {
+  const response = await fetch(`${API_URL}/${key}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export async function noteUpdate(key, updates) {
 }
 
 export async function noteDelete(key) {
-  const response = await fetch(`${API_URL}/api/notes/${key}`, {
+  const response = await fetch(`${API_URL}/${key}`, {
     method: 'DELETE',
   });
   return response.json();
