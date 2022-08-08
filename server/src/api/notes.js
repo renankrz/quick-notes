@@ -47,10 +47,11 @@ router.post('/multiple', async (req, res, next) => {
   }
 });
 
-const readRandomNote = async (db) => withErrorHandling(async () => {
+const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
+      FILTER n.categoryKey IN ${categoriesKeys}
       SORT RAND()
       LIMIT 1
       RETURN n
@@ -59,74 +60,37 @@ const readRandomNote = async (db) => withErrorHandling(async () => {
   return result[0] || null;
 });
 
-router.get('/random', async (_, res, next) => {
+router.get('/random', async (req, res, next) => {
+  const categoriesKeys = Array.isArray(req.query.cat)
+    ? req.query.cat
+    : [req.query.cat];
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNote = await readRandomNote(db);
+    const dbNote = await readRandomNote(db, categoriesKeys);
     res.json(dbNote);
   } catch (error) {
     next(error);
   }
 });
 
-const readRandomNoteFromCategory = async (db, categoryKey) => withErrorHandling(async () => {
+const readAllNotes = async (db, categoriesKeys) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
-      FILTER n.categoryKey == ${categoryKey}
-      SORT RAND()
-      LIMIT 1
-      RETURN n
-  `);
-  const result = await cursor.all();
-  return result[0] || null;
-});
-
-router.get('/:categorykey/random', async (req, res, next) => {
-  try {
-    const db = connection.database(process.env.DB_NAME);
-    const dbNote = await readRandomNoteFromCategory(db, req.params.categorykey);
-    res.json(dbNote);
-  } catch (error) {
-    next(error);
-  }
-});
-
-const readAllNotes = async (db) => withErrorHandling(async () => {
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    FOR n IN ${notesColl}
+      FILTER n.categoryKey IN ${categoriesKeys}
       RETURN n
   `);
   const result = await cursor.all();
   return result;
 });
 
-router.get('/', async (_, res, next) => {
+router.get('/', async (req, res, next) => {
+  const categoriesKeys = Array.isArray(req.query.cat)
+    ? req.query.cat
+    : [req.query.cat];
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNotes = await readAllNotes(db);
-    res.json(dbNotes);
-  } catch (error) {
-    next(error);
-  }
-});
-
-const readAllNotesFromCategory = async (db, categoryKey) => withErrorHandling(async () => {
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    FOR n IN ${notesColl}
-      FILTER n.categoryKey == ${categoryKey}
-      RETURN n
-  `);
-  const result = await cursor.all();
-  return result;
-});
-
-router.get('/:categorykey', async (req, res, next) => {
-  try {
-    const db = connection.database(process.env.DB_NAME);
-    const dbNotes = await readAllNotesFromCategory(db, req.params.categorykey);
+    const dbNotes = await readAllNotes(db, categoriesKeys);
     res.json(dbNotes);
   } catch (error) {
     next(error);

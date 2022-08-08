@@ -5,9 +5,11 @@ import { readAllNotes } from '../api/notes';
 function NotesAll() {
   const [notes, setNotes] = useState([]);
 
+  const categoriesKeys = '?cat=2576616&cat=2572444'; // JavaScript & Machine Learning
+
   const { isLoading } = useQuery(
-    ['notesAll'],
-    () => readAllNotes(),
+    ['notesAll', categoriesKeys],
+    () => readAllNotes(categoriesKeys),
     {
       onSuccess: (data) => {
         setNotes([...data]);
