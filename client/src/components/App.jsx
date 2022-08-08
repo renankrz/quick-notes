@@ -4,8 +4,15 @@ import NotesAll from './NotesAll';
 import NoteOne from './NoteOne';
 
 function App() {
+  const containerStyle = {
+    'width': '70%',
+    'margin': 'auto',
+    'display': 'flex',
+    'justifyContent': 'space-between',
+  };
+
   return (
-    <div>
+    <div style={containerStyle}>
       <div>
         <Categories />
       </div>

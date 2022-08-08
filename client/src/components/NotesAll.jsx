@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { notesRead } from '../api/notes';
+import { readAllNotes } from '../api/notes';
 
 function NotesAll() {
   const [notes, setNotes] = useState([]);
 
-  const category = 'All';
-  const isRandom = false;
-
   const { isLoading } = useQuery(
-    ['notesAll', category, isRandom],
-    () => notesRead(category, isRandom),
+    ['notesAll'],
+    () => readAllNotes(),
     {
       onSuccess: (data) => {
         setNotes([...data]);
@@ -22,17 +19,14 @@ function NotesAll() {
     <h1>Loading</h1>
   ) : (
     <div>
-      <h1>All Notes</h1>
+      <h1 style={{ 'textAlign': 'center' }}>All Notes</h1>
       <ul>
         {notes.map((note) => (
           <li key={note._id}>
-            {note.category}
-            {' '}
-            {note.title}
-            {' '}
-            {note.rank}
-            {' '}
-            {note.markdown}
+            <p>Category key: {note.categoryKey}</p>
+            <p>Title: {note.title}</p>
+            <p>Rank: {note.rank}</p>
+            <p>Data: {note.data}</p>
           </li>
         ))}
       </ul>

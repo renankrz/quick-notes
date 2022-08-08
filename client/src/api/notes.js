@@ -11,48 +11,28 @@ export async function noteCreate(note) {
   return response.json();
 }
 
-async function readRandomNote() {
+export async function readRandomNote() {
   const response = await fetch(`${API_URL}/api/notes/random`);
   return response.json();
 }
 
-async function readRandomNoteFromCategory(category) {
-  const response = await fetch(`${API_URL}/api/notes/${category}/random`);
+export async function readRandomNoteFromCategory(categoryKey) {
+  const response = await fetch(`${API_URL}/api/notes/${categoryKey}/random`);
   return response.json();
 }
 
-async function readAllNotes() {
+export async function readAllNotes() {
   const response = await fetch(`${API_URL}/api/notes`);
   return response.json();
 }
 
-async function readAllNotesFromCategory(category) {
-  const response = await fetch(`${API_URL}/api/notes/${category}`);
+export async function readAllNotesFromCategory(categoryKey) {
+  const response = await fetch(`${API_URL}/api/notes/${categoryKey}`);
   return response.json();
 }
 
-/*
- * Unified read function.
- */
-export async function notesRead(category, isRandom) {
-  if (category === 'All') {
-    if (isRandom) {
-      const response = await readRandomNote();
-      return response;
-    }
-    const response = await readAllNotes();
-    return response;
-  }
-  if (isRandom) {
-    const response = await readRandomNoteFromCategory(category);
-    return response;
-  }
-  const response = await readAllNotesFromCategory(category);
-  return response;
-}
-
-export async function noteUpdate(id, updates) {
-  const response = await fetch(`${API_URL}/api/notes/${id}`, {
+export async function noteUpdate(key, updates) {
+  const response = await fetch(`${API_URL}/api/notes/${key}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -62,8 +42,8 @@ export async function noteUpdate(id, updates) {
   return response.json();
 }
 
-export async function noteDelete(id) {
-  const response = await fetch(`${API_URL}/api/notes/${id}`, {
+export async function noteDelete(key) {
+  const response = await fetch(`${API_URL}/api/notes/${key}`, {
     method: 'DELETE',
   });
   return response.json();

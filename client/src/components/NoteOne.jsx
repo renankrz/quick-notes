@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { notesRead } from '../api/notes';
+import { readRandomNoteFromCategory } from '../api/notes';
 
 function NoteOne() {
   const [note, setNote] = useState([]);
 
-  const category = 'cat1';
-  const isRandom = true;
+  const categoryKey = '2572444'; // Machine Learning
 
   const { isLoading } = useQuery(
-    ['noteOne', category, isRandom],
-    () => notesRead(category, isRandom),
+    ['noteOne', categoryKey],
+    () => readRandomNoteFromCategory(categoryKey),
     {
       onSuccess: (data) => {
         setNote(data);
@@ -22,18 +21,15 @@ function NoteOne() {
     <h1>Loading</h1>
   ) : (
     <div>
-      <h1>Random Note</h1>
+      <h1 style={{ 'textAlign': 'center' }}>Random Note From Cat.</h1>
       {note
         && (
-          <p>
-            {note.category}
-            {' '}
-            {note.title}
-            {' '}
-            {note.rank}
-            {' '}
-            {note.markdown}
-          </p>
+          <div>
+            <p>Category key: {note.categoryKey}</p>
+            <p>Title: {note.title}</p>
+            <p>Rank: {note.rank}</p>
+            <p>Data: {note.data}</p>
+          </div>
         )}
     </div>
   );
