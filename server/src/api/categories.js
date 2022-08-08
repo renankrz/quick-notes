@@ -2,7 +2,7 @@
 const { aql } = require('arangojs');
 const { Router } = require('express');
 const { connection } = require('../conn');
-const { COLL_CATEGORIES, COLL_HAS_SUBCATEGORY } = require('../const');
+const { COLL_CATEGORIES, COLL_HAS_SUBCATEGORY, GRAPH_CATEGORIES } = require('../const');
 const { withErrorHandling } = require('../utils');
 
 const router = Router();
@@ -47,6 +47,63 @@ router.get('/', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
     const dbCategories = await readAllCategories(db);
+    res.json(dbCategories);
+  } catch (error) {
+    next(error);
+  }
+});
+
+const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
+  const categoriesColl = db.collection(COLL_CATEGORIES);
+
+  const verticesCursor = await db.query(aql`
+    FOR v IN ${categoriesColl}
+      return v
+  `);
+  const edgesCursor = await db.query(aql`
+    LET rootArray = (
+      FOR c IN ${categoriesColl}
+        FILTER c.name == 'root'
+        LIMIT 1
+        RETURN c
+    )
+    LET root = rootArray[0]
+    FOR v, e
+    IN 1..99
+    OUTBOUND root._id
+    GRAPH ${GRAPH_CATEGORIES}
+    OPTIONS { order: 'bfs' }
+      RETURN { from: e._from, to: e._to }
+  `);
+
+  const vertices = await verticesCursor.all();
+  const edges = (await edgesCursor.all()).reverse();
+
+  const categories = vertices.map((v) => ({
+    ...v,
+    children: [],
+  }));
+
+  for (let i = 0; i < edges.length; i += 1) {
+    // Get the element with id "from" in "categories" (removing)
+    const indexFrom = categories.findIndex((v) => v._id === edges[i].from);
+    const from = categories.splice(indexFrom, 1)[0];
+    // Get the element with id "to" in "categories" (removing)
+    const indexTo = categories.findIndex((v) => v._id === edges[i].to);
+    const to = categories.splice(indexTo, 1)[0];
+    // Put the "to" into the "children" array of "from"
+    from.children.push(to);
+    // Put the new vertex into "categories"
+    categories.push(from);
+  }
+
+  return categories[0];
+});
+
+router.get('/rich', async (_, res, next) => {
+  try {
+    const db = connection.database(process.env.DB_NAME);
+    const dbCategories = await readAllCategoriesRich(db);
     res.json(dbCategories);
   } catch (error) {
     next(error);
