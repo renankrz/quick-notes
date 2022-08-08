@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 const { aql } = require('arangojs');
 const { Router } = require('express');
