@@ -69,11 +69,11 @@ router.get('/random', async (_, res, next) => {
   }
 });
 
-const readRandomNoteFromCategory = async (db, category) => withErrorHandling(async () => {
+const readRandomNoteFromCategory = async (db, categoryKey) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
-      FILTER n.category == ${category}
+      FILTER n.categoryKey == ${categoryKey}
       SORT RAND()
       LIMIT 1
       RETURN n
@@ -82,10 +82,10 @@ const readRandomNoteFromCategory = async (db, category) => withErrorHandling(asy
   return result[0] || null;
 });
 
-router.get('/:category/random', async (req, res, next) => {
+router.get('/:categorykey/random', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNote = await readRandomNoteFromCategory(db, req.params.category);
+    const dbNote = await readRandomNoteFromCategory(db, req.params.categorykey);
     res.json(dbNote);
   } catch (error) {
     next(error);
@@ -112,21 +112,21 @@ router.get('/', async (_, res, next) => {
   }
 });
 
-const readAllNotesFromCategory = async (db, category) => withErrorHandling(async () => {
+const readAllNotesFromCategory = async (db, categoryKey) => withErrorHandling(async () => {
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
-      FILTER n.category == ${category}
+      FILTER n.categoryKey == ${categoryKey}
       RETURN n
   `);
   const result = await cursor.all();
   return result;
 });
 
-router.get('/:category', async (req, res, next) => {
+router.get('/:categorykey', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNotes = await readAllNotesFromCategory(db, req.params.category);
+    const dbNotes = await readAllNotesFromCategory(db, req.params.categorykey);
     res.json(dbNotes);
   } catch (error) {
     next(error);
@@ -143,10 +143,10 @@ const updateNote = async (db, key, updatedNote) => withErrorHandling(async () =>
   return result;
 });
 
-router.put('/:key', async (req, res, next) => {
+router.put('/:notekey', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbNote = await updateNote(db, req.params.key, req.body);
+    const dbNote = await updateNote(db, req.params.notekey, req.body);
     res.json(dbNote);
   } catch (error) {
     next(error);
@@ -164,10 +164,10 @@ const deleteNote = async (db, key) => withErrorHandling(async () => {
   return result;
 });
 
-router.delete('/:key', async (req, res, next) => {
+router.delete('/:notekey', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const deletedNote = await deleteNote(db, req.params.key);
+    const deletedNote = await deleteNote(db, req.params.notekey);
     res.json(deletedNote);
   } catch (error) {
     next(error);

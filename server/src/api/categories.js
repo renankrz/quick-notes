@@ -8,15 +8,17 @@ const { withErrorHandling } = require('../utils');
 
 const router = Router();
 
-const createCategory = async (db, category, parentId) => withErrorHandling(async () => {
+const createCategory = async (db, category, parentKey) => withErrorHandling(async () => {
   const categoriesColl = db.collection(COLL_CATEGORIES);
   const hasSubcategory = db.collection(COLL_HAS_SUBCATEGORY);
   const dbCategory = await categoriesColl.save(category, {
     returnNew: true,
   });
+  const parentId = `${COLL_CATEGORIES}/${parentKey}`;
+  const childId = `${COLL_CATEGORIES}/${dbCategory.new._key}`;
   await hasSubcategory.save({
     _from: parentId,
-    _to: dbCategory.new._id,
+    _to: childId,
   });
   return dbCategory.new;
 });
@@ -24,7 +26,7 @@ const createCategory = async (db, category, parentId) => withErrorHandling(async
 router.post('/', async (req, res, next) => {
   try {
     const db = connection.database(process.env.DB_NAME);
-    const dbCategory = await createCategory(db, req.body.category, req.body.parentId);
+    const dbCategory = await createCategory(db, req.body.category, req.body.parentKey);
     res.json(dbCategory);
   } catch (error) {
     next(error);
