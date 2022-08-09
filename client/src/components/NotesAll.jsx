@@ -19,14 +19,26 @@ function NotesAll({ categoriesKeys }) {
     <h1>Loading</h1>
   ) : (
     <div>
-      <h1 style={{ 'textAlign': 'center' }}>All Notes</h1>
+      <h1 style={{ textAlign: 'center' }}>All Notes</h1>
       <ul>
         {notes.map((note) => (
           <li key={note._id}>
-            <p>Category key: {note.categoryKey}</p>
-            <p>Title: {note.title}</p>
-            <p>Rank: {note.rank}</p>
-            <p>Data: {note.data}</p>
+            <p>
+              Category key:
+              {note.categoryKey}
+            </p>
+            <p>
+              Title:
+              {note.title}
+            </p>
+            <p>
+              Rank:
+              {note.rank}
+            </p>
+            <p>
+              Data:
+              {note.data}
+            </p>
           </li>
         ))}
       </ul>

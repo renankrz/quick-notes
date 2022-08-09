@@ -6,7 +6,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TreeItem from '@mui/lab/TreeItem';
 import TreeView from '@mui/lab/TreeView';
 
-function Categories({ categories, selected, handleSelect, handleSelectAllClick, expandableNodes }) {
+function Categories({
+  categories, selected, handleSelect, handleSelectAllClick, expandableNodes,
+}) {
   const [expanded, setExpanded] = React.useState([]);
 
   const handleExpand = (event, nodeIds) => {
@@ -14,9 +16,7 @@ function Categories({ categories, selected, handleSelect, handleSelectAllClick, 
   };
 
   const handleExpandAllClick = () => {
-    setExpanded((oldExpanded) =>
-      oldExpanded.length === 0 ? expandableNodes.current : [],
-    );
+    setExpanded((oldExpanded) => (oldExpanded.length === 0 ? expandableNodes.current : []));
   };
 
   const renderTree = (node) => (

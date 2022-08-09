@@ -6,16 +6,16 @@ import NoteOne from './NoteOne';
 import { readCategoriesRich } from '../api/categories';
 
 const containerStyle = {
-  'width': '90%',
-  'margin': 'auto',
-  'display': 'flex',
-  'justifyContent': 'space-between',
+  width: '90%',
+  margin: 'auto',
+  display: 'flex',
+  justifyContent: 'space-between',
 };
 
 const partStyle = {
-  'width': '100%',
-  'padding': '10px',
-  'border': '1px solid grey',
+  width: '100%',
+  padding: '10px',
+  border: '1px solid grey',
 };
 
 function App() {
@@ -37,9 +37,7 @@ function App() {
   };
 
   const handleSelectAllClick = () => {
-    setSelected((oldSelected) =>
-      oldSelected.length === 0 ? selectableNodes.current : [],
-    );
+    setSelected((oldSelected) => (oldSelected.length === 0 ? selectableNodes.current : []));
   };
 
   return (
@@ -47,13 +45,15 @@ function App() {
       <div style={partStyle}>
         {query.isLoading ? (
           <h1>Loading</h1>
-        ) : (<Categories
-          categories={query.data.categories}
-          selected={selected}
-          handleSelect={handleSelect}
-          handleSelectAllClick={handleSelectAllClick}
-          expandableNodes={expandableNodes}
-        />)}
+        ) : (
+          <Categories
+            categories={query.data.categories}
+            selected={selected}
+            handleSelect={handleSelect}
+            handleSelectAllClick={handleSelectAllClick}
+            expandableNodes={expandableNodes}
+          />
+        )}
       </div>
       <div style={partStyle}>
         <NotesAll

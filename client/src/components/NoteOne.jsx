@@ -19,14 +19,26 @@ function NoteOne({ categoriesKeys }) {
     <h1>Loading</h1>
   ) : (
     <div>
-      <h1 style={{ 'textAlign': 'center' }}>Random Note</h1>
+      <h1 style={{ textAlign: 'center' }}>Random Note</h1>
       {note
         && (
           <div>
-            <p>Category key: {note.categoryKey}</p>
-            <p>Title: {note.title}</p>
-            <p>Rank: {note.rank}</p>
-            <p>Data: {note.data}</p>
+            <p>
+              Category key:
+              {note.categoryKey}
+            </p>
+            <p>
+              Title:
+              {note.title}
+            </p>
+            <p>
+              Rank:
+              {note.rank}
+            </p>
+            <p>
+              Data:
+              {note.data}
+            </p>
           </div>
         )}
     </div>

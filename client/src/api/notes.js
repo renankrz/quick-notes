@@ -12,18 +12,18 @@ export async function createNote(note) {
 }
 
 function buildQueryString(categoriesKeys) {
-  const queryArray = categoriesKeys.map((c) => 'cat=' + c);
-  return '?' + queryArray.join('&');
-} 
+  const queryArray = categoriesKeys.map((c) => `cat=${c}`);
+  return `?${queryArray.join('&')}`;
+}
 
 export async function readAllNotes(categoriesKeys) {
-  const queryString = buildQueryString(categoriesKeys)
+  const queryString = buildQueryString(categoriesKeys);
   const response = await fetch(`${API_URL}${queryString}`);
   return response.json();
 }
 
 export async function readRandomNote(categoriesKeys) {
-  const queryString = buildQueryString(categoriesKeys)
+  const queryString = buildQueryString(categoriesKeys);
   const response = await fetch(`${API_URL}/random${queryString}`);
   return response.json();
 }
