@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { readAllNotes } from '../api/notes';
 
-function NotesAll() {
-  const [notes, setNotes] = useState([]);
-
-  const categoriesKeys = '?cat=2576616&cat=2572444'; // JavaScript & Machine Learning
+function NotesAll({ categoriesKeys }) {
+  const [notes, setNotes] = React.useState([]);
 
   const { isLoading } = useQuery(
     ['notesAll', categoriesKeys],

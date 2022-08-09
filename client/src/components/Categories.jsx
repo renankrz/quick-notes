@@ -5,41 +5,17 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TreeItem from '@mui/lab/TreeItem';
 import TreeView from '@mui/lab/TreeView';
-import { useQuery } from '@tanstack/react-query';
-import { readCategoriesRich } from '../api/categories';
 
-function Categories() {
+function Categories({ categories, selected, handleSelect, handleSelectAllClick, expandableNodes }) {
   const [expanded, setExpanded] = React.useState([]);
-  const [selected, setSelected] = React.useState([]);
-  const expandableNodes = React.useRef(null);
-  const selectableNodes = React.useRef(null);
 
-  const query = useQuery(['categories'], readCategoriesRich, {
-    onSuccess: (data) => {
-      // Nodes that have children
-      expandableNodes.current = [...new Set(data.edges.map((e) => e.from))];
-      // All nodes
-      selectableNodes.current = data.vertices.map((v) => v.key );
-    },
-  });
-
-  const handleToggle = (event, nodeIds) => {
+  const handleExpand = (event, nodeIds) => {
     setExpanded(nodeIds);
   };
 
-  const handleSelect = (event, nodeIds) => {
-    setSelected(nodeIds);
-  };
-
-  const handleExpandClick = () => {
+  const handleExpandAllClick = () => {
     setExpanded((oldExpanded) =>
       oldExpanded.length === 0 ? expandableNodes.current : [],
-    );
-  };
-
-  const handleSelectClick = () => {
-    setSelected((oldSelected) =>
-      oldSelected.length === 0 ? selectableNodes.current : [],
     );
   };
 
@@ -51,15 +27,13 @@ function Categories() {
     </TreeItem>
   );
 
-  return query.isLoading ? (
-    <h1>Loading</h1>
-  ) : (
-    <Box sx={{ height: 370, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}>
+  return (
+    <Box sx={{ height: 370, flexGrow: 1, overflow: 'hidden' }}>
       <Box sx={{ mb: 1 }}>
-        <Button onClick={handleExpandClick}>
+        <Button onClick={handleExpandAllClick}>
           {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
         </Button>
-        <Button onClick={handleSelectClick}>
+        <Button onClick={handleSelectAllClick}>
           {selected.length === 0 ? 'Select all' : 'Unselect all'}
         </Button>
       </Box>
@@ -68,11 +42,11 @@ function Categories() {
         defaultExpandIcon={<ChevronRightIcon />}
         expanded={expanded}
         selected={selected}
-        onNodeToggle={handleToggle}
+        onNodeToggle={handleExpand}
         onNodeSelect={handleSelect}
         multiSelect
       >
-        {renderTree(query.data.categories)}
+        {renderTree(categories)}
       </TreeView>
     </Box>
   );

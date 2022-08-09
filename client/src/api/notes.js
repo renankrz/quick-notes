@@ -11,13 +11,20 @@ export async function createNote(note) {
   return response.json();
 }
 
+function buildQueryString(categoriesKeys) {
+  const queryArray = categoriesKeys.map((c) => 'cat=' + c);
+  return '?' + queryArray.join('&');
+} 
+
 export async function readAllNotes(categoriesKeys) {
-  const response = await fetch(`${API_URL}${categoriesKeys}`);
+  const queryString = buildQueryString(categoriesKeys)
+  const response = await fetch(`${API_URL}${queryString}`);
   return response.json();
 }
 
 export async function readRandomNote(categoriesKeys) {
-  const response = await fetch(`${API_URL}/random${categoriesKeys}`);
+  const queryString = buildQueryString(categoriesKeys)
+  const response = await fetch(`${API_URL}/random${queryString}`);
   return response.json();
 }
 
