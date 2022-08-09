@@ -1,33 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import categoriesRead from '../api/categories';
+import { readCategoriesRich } from '../api/categories';
+
+const renderTree = (node) => (
+  <ul key={node._id}>
+    <li key={node._id}>
+      {node.name}
+      {node.children.length > 0
+        ? node.children.map((c) => renderTree(c))
+        : null}
+    </li>
+  </ul>
+);
 
 function Categories() {
-  const [categories, setCategories] = useState([]);
+  const query = useQuery(['categories'], readCategoriesRich);
 
-  const { isLoading } = useQuery(
-    ['categories'],
-    () => categoriesRead(),
-    {
-      onSuccess: (data) => {
-        setCategories([...data]);
-      },
-    },
-  );
-
-  return isLoading ? (
+  return query.isLoading ? (
     <h1>Loading</h1>
   ) : (
     <div>
       <h1 style={{ 'textAlign': 'center' }}>Categories</h1>
-      <ul>
-        {categories.map((category) => (
-          <li key={category._key}>
-            <p>Category key: {category._key}</p>
-            <p>Name: {category.name}</p>
-          </li>
-        ))}
-      </ul>
+      {renderTree(query.data)}
     </div>
   );
 }

@@ -1,6 +1,11 @@
 const API_URL = `${import.meta.env.VITE_API_HOST}:${import.meta.env.VITE_API_PORT}/api/categories`;
 
-export default async function categoriesRead() {
+export async function readCategories() {
   const response = await fetch(`${API_URL}`);
+  return response.json();
+}
+
+export async function readCategoriesRich() {
+  const response = await fetch(`${API_URL}/rich`);
   return response.json();
 }
