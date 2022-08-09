@@ -58,7 +58,7 @@ const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
 
   const verticesCursor = await db.query(aql`
     FOR v IN ${categoriesColl}
-      return v
+      RETURN { key: v._key, name: v.name }
   `);
   const edgesCursor = await db.query(aql`
     LET rootArray = (
@@ -77,19 +77,21 @@ const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
   `);
 
   const vertices = await verticesCursor.all();
-  const edges = (await edgesCursor.all()).reverse();
-
+  const edges = (await edgesCursor.all()).reverse().map((e) => ({
+    from: e.from.split('/')[1],
+    to: e.to.split('/')[1],
+  }));
   const categories = vertices.map((v) => ({
     ...v,
     children: [],
   }));
 
   for (let i = 0; i < edges.length; i += 1) {
-    // Get the element with id "from" in "categories" (removing)
-    const indexFrom = categories.findIndex((v) => v._id === edges[i].from);
+    // Get the element with key "from" in "categories" (removing)
+    const indexFrom = categories.findIndex((v) => v.key === edges[i].from);
     const from = categories.splice(indexFrom, 1)[0];
-    // Get the element with id "to" in "categories" (removing)
-    const indexTo = categories.findIndex((v) => v._id === edges[i].to);
+    // Get the element with key "to" in "categories" (removing)
+    const indexTo = categories.findIndex((v) => v.key === edges[i].to);
     const to = categories.splice(indexTo, 1)[0];
     // Put the "to" into the "children" array of "from"
     from.children.push(to);
@@ -97,7 +99,11 @@ const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
     categories.push(from);
   }
 
-  return categories[0];
+  return {
+    categories: categories[0],
+    edges,
+    vertices,
+  };
 });
 
 router.get('/rich', async (_, res, next) => {
