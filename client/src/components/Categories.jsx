@@ -46,7 +46,11 @@ function Categories({
         onNodeSelect={handleSelect}
         multiSelect
       >
-        {renderTree(categories)}
+        {
+          categories.children.map((category) => (
+            renderTree(category)
+          ))
+        }
       </TreeView>
     </Box>
   );
