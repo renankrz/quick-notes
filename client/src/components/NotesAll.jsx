@@ -22,7 +22,7 @@ function NotesAll({ categoriesKeys }) {
       <h1 style={{ textAlign: 'center' }}>All Notes</h1>
       <ul>
         {notes.map((note) => (
-          <li key={note._id}>
+          <li key={note.key}>
             <p>
               Category key:
               {note.categoryKey}

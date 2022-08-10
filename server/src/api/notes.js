@@ -54,7 +54,13 @@ const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () 
       FILTER n.categoryKey IN ${categoriesKeys}
       SORT RAND()
       LIMIT 1
-      RETURN n
+      RETURN {
+        key: n._key,
+        categoryKey: n.categoryKey,
+        data: n.data,
+        rank: n.rank,
+        title: n.title,
+      }
   `);
   const result = await cursor.all();
   return result[0] || null;
@@ -78,7 +84,13 @@ const readAllNotes = async (db, categoriesKeys) => withErrorHandling(async () =>
   const cursor = await db.query(aql`
     FOR n IN ${notesColl}
       FILTER n.categoryKey IN ${categoriesKeys}
-      RETURN n
+      RETURN {
+        key: n._key,
+        categoryKey: n.categoryKey,
+        data: n.data,
+        rank: n.rank,
+        title: n.title,
+      }
   `);
   const result = await cursor.all();
   return result;
