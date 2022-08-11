@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -55,5 +56,13 @@ function Categories({
     </Box>
   );
 }
+
+Categories.propTypes = {
+  categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+  selected: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleSelect: PropTypes.func.isRequired,
+  handleSelectAllClick: PropTypes.func.isRequired,
+  expandableNodes: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 export default Categories;

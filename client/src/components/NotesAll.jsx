@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { readAllNotes } from '../api/notes';
 
@@ -45,5 +46,9 @@ function NotesAll({ categoriesKeys }) {
     </div>
   );
 }
+
+NotesAll.propTypes = {
+  categoriesKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 export default NotesAll;

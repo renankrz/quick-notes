@@ -18,5 +18,10 @@ module.exports = {
     'react',
   ],
   rules: {
+    'react/forbid-prop-types': ['error', {
+      forbid: ['any', 'array'],
+      checkContextTypes: true,
+      checkChildContextTypes: true,
+    }],
   },
 };
