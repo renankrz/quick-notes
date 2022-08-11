@@ -21,10 +21,19 @@ function Categories({
   };
 
   const renderTree = (node) => (
-    <TreeItem key={node.key} nodeId={node.key} label={node.name}>
-      {node.children.length > 0
-        ? node.children.map((c) => renderTree(c))
-        : null}
+    <TreeItem
+      key={node.key}
+      nodeId={node.key}
+      label={node.name}
+      sx={{
+        'user-select': 'none',
+      }}
+    >
+      {
+        node.children.length > 0
+          ? node.children.map((c) => renderTree(c))
+          : null
+      }
     </TreeItem>
   );
 
