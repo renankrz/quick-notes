@@ -5,25 +5,18 @@ import { readAllNotes } from '../api/notes';
 import Content from './Content';
 
 function NotesAll({ categoriesKeys }) {
-  const [notes, setNotes] = React.useState([]);
-
-  const { isLoading } = useQuery(
+  const query = useQuery(
     ['notesAll', categoriesKeys],
     () => readAllNotes(categoriesKeys),
-    {
-      onSuccess: (data) => {
-        setNotes([...data]);
-      },
-    },
   );
 
-  return isLoading ? (
+  return query.isLoading ? (
     <h1>Loading</h1>
   ) : (
     <div>
       <h1 style={{ textAlign: 'center' }}>All Notes</h1>
       <ul>
-        {notes.map((note) => (
+        {query.data.map((note) => (
           <li key={note.key}>
             <Content content={note.data} />
           </li>

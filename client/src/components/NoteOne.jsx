@@ -5,26 +5,19 @@ import { readRandomNote } from '../api/notes';
 import Content from './Content';
 
 function NoteOne({ categoriesKeys }) {
-  const [note, setNote] = React.useState(null);
-
-  const { isLoading } = useQuery(
+  const query = useQuery(
     ['noteOne', categoriesKeys],
     () => readRandomNote(categoriesKeys),
-    {
-      onSuccess: (data) => {
-        setNote(data);
-      },
-    },
   );
 
-  return isLoading ? (
+  return query.isLoading ? (
     <h1>Loading</h1>
   ) : (
     <div>
       <h1 style={{ textAlign: 'center' }}>Random Note</h1>
-      {note
+      {query.data
         && (
-          <Content content={note.data} />
+          <Content content={query.data.data} />
         )}
     </div>
   );
