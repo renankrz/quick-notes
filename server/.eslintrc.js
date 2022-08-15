@@ -12,4 +12,12 @@ module.exports = {
   },
   rules: {
   },
+  overrides: [
+    {
+      files: ['categories.js'],
+      rules: {
+        'no-underscore-dangle': 'off',
+      },
+    },
+  ],
 };

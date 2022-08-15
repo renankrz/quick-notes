@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const { Router } = require('express');
 const { connection } = require('../conn');
 const { COLL_CATEGORIES, COLL_HAS_SUBCATEGORY, GRAPH_CATEGORIES } = require('../const');
