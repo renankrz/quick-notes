@@ -15,10 +15,13 @@ function NoteOne({ categoriesKeys }) {
   ) : (
     <div>
       <h1 style={{ textAlign: 'center' }}>Random Note</h1>
-      {query.data
-        && (
-          <Content content={query.data.data} />
-        )}
+      <ul>
+        {query.data.map((note) => (
+          <li key={note.key}>
+            <Content content={note.data} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

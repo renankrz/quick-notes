@@ -87,7 +87,7 @@ const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () 
     },
   });
   const result = await cursor.all();
-  return result[0] || null;
+  return result;
 });
 
 router.get('/random', async (req, res, next) => {
