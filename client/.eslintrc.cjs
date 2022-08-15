@@ -24,4 +24,14 @@ module.exports = {
       checkChildContextTypes: true,
     }],
   },
+  overrides: [
+    {
+      files: ['Content.jsx'],
+      rules: {
+        'react/jsx-props-no-spreading': 'off',
+        'no-param-reassign': 'off',
+        'react/prop-types': 'off',
+      },
+    },
+  ],
 };
