@@ -1,7 +1,7 @@
 const { aql } = require('arangojs');
 const { Router } = require('express');
 const { connection } = require('../conn');
-const { COLL_NOTES } = require('../const');
+const { COLL_NOTES, GRAPH_CATEGORIES } = require('../const');
 const { withErrorHandling } = require('../utils');
 
 const router = Router();
@@ -48,10 +48,19 @@ router.post('/multiple', async (req, res, next) => {
 });
 
 const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () => {
+  const startVerticesKeys = categoriesKeys.map((k) => `categories/${k}`);
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
+    LET allKeys = (
+      FOR startVertex IN ${startVerticesKeys}
+        FOR v
+        IN 0..99
+        OUTBOUND startVertex
+        GRAPH ${GRAPH_CATEGORIES}
+          RETURN DISTINCT v._key
+    )
     FOR n IN ${notesColl}
-      FILTER n.categoryKey IN ${categoriesKeys}
+      FILTER n.categoryKey IN allKeys
       SORT RAND()
       LIMIT 1
       RETURN {
@@ -80,10 +89,19 @@ router.get('/random', async (req, res, next) => {
 });
 
 const readAllNotes = async (db, categoriesKeys) => withErrorHandling(async () => {
+  const startVerticesKeys = categoriesKeys.map((k) => `categories/${k}`);
   const notesColl = db.collection(COLL_NOTES);
   const cursor = await db.query(aql`
+    LET allKeys = (
+      FOR startVertex IN ${startVerticesKeys}
+        FOR v
+        IN 0..99
+        OUTBOUND startVertex
+        GRAPH ${GRAPH_CATEGORIES}
+          RETURN DISTINCT v._key
+    )
     FOR n IN ${notesColl}
-      FILTER n.categoryKey IN ${categoriesKeys}
+      FILTER n.categoryKey IN allKeys
       RETURN {
         key: n._key,
         categoryKey: n.categoryKey,
