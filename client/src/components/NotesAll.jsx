@@ -2,6 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { readAllNotes } from '../api/notes';
+import Content from './Content';
 
 function NotesAll({ categoriesKeys }) {
   const [notes, setNotes] = React.useState([]);
@@ -24,22 +25,7 @@ function NotesAll({ categoriesKeys }) {
       <ul>
         {notes.map((note) => (
           <li key={note.key}>
-            <p>
-              Category key:
-              {note.categoryKey}
-            </p>
-            <p>
-              Title:
-              {note.title}
-            </p>
-            <p>
-              Rank:
-              {note.rank}
-            </p>
-            <p>
-              Data:
-              {note.data}
-            </p>
+            <Content content={note.data} />
           </li>
         ))}
       </ul>
