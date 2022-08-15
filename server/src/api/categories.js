@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-const { aql } = require('arangojs');
 const { Router } = require('express');
 const { connection } = require('../conn');
 const { COLL_CATEGORIES, COLL_HAS_SUBCATEGORY, GRAPH_CATEGORIES } = require('../const');
@@ -33,12 +32,16 @@ router.post('/', async (req, res, next) => {
 });
 
 const readAllCategories = async (db) => withErrorHandling(async () => {
-  const categoriesColl = db.collection(COLL_CATEGORIES);
-  const cursor = await db.query(aql`
-    FOR c IN ${categoriesColl}
-      SORT c
-      RETURN c
-  `);
+  const cursor = await db.query({
+    query: `
+      FOR c IN @@collection
+        SORT c
+        RETURN c
+    `,
+    bindVars: {
+      '@collection': COLL_CATEGORIES,
+    },
+  });
   const result = await cursor.all();
   return result;
 });
@@ -54,27 +57,36 @@ router.get('/', async (req, res, next) => {
 });
 
 const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
-  const categoriesColl = db.collection(COLL_CATEGORIES);
-
-  const verticesCursor = await db.query(aql`
-    FOR v IN ${categoriesColl}
-      RETURN { key: v._key, name: v.name }
-  `);
-  const edgesCursor = await db.query(aql`
-    LET rootArray = (
-      FOR c IN ${categoriesColl}
-        FILTER c.name == 'root'
-        LIMIT 1
-        RETURN c
-    )
-    LET root = rootArray[0]
-    FOR v, e
-    IN 1..99
-    OUTBOUND root._id
-    GRAPH ${GRAPH_CATEGORIES}
-    OPTIONS { order: 'bfs' }
-      RETURN { from: e._from, to: e._to }
-  `);
+  const verticesCursor = await db.query({
+    query: `
+      FOR v IN @@collection
+        RETURN { key: v._key, name: v.name }
+    `,
+    bindVars: {
+      '@collection': COLL_CATEGORIES,
+    },
+  });
+  const edgesCursor = await db.query({
+    query: `
+      LET rootArray = (
+        FOR c IN @@collection
+          FILTER c.name == 'root'
+          LIMIT 1
+          RETURN c
+      )
+      LET root = rootArray[0]
+      FOR v, e
+      IN 1..99
+      OUTBOUND root._id
+      GRAPH @graph
+      OPTIONS { order: 'bfs' }
+        RETURN { from: e._from, to: e._to }
+    `,
+    bindVars: {
+      '@collection': COLL_CATEGORIES,
+      graph: GRAPH_CATEGORIES,
+    },
+  });
 
   const vertices = await verticesCursor.all();
   const edges = (await edgesCursor.all()).reverse().map((e) => ({

@@ -1,4 +1,3 @@
-const { aql } = require('arangojs');
 const { Router } = require('express');
 const { connection } = require('../conn');
 const { COLL_NOTES, GRAPH_CATEGORIES } = require('../const');
@@ -7,11 +6,16 @@ const { withErrorHandling } = require('../utils');
 const router = Router();
 
 const createNote = async (db, note) => withErrorHandling(async () => {
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    INSERT ${note} INTO ${notesColl}
-    RETURN NEW
-  `);
+  const cursor = await db.query({
+    query: `
+      INSERT @note INTO @@collection
+      RETURN NEW
+    `,
+    bindVars: {
+      '@collection': COLL_NOTES,
+      note,
+    },
+  });
   const result = await cursor.all();
   return result;
 });
@@ -27,12 +31,17 @@ router.post('/', async (req, res, next) => {
 });
 
 const createMultipleNotes = async (db, notes) => withErrorHandling(async () => {
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    FOR n IN ${notes}
-      INSERT n INTO ${notesColl}
-    RETURN NEW
-  `);
+  const cursor = await db.query({
+    query: `
+      FOR n IN @notes
+        INSERT n INTO @@collection
+      RETURN NEW
+    `,
+    bindVars: {
+      '@collection': COLL_NOTES,
+      notes,
+    },
+  });
   const result = await cursor.all();
   return result;
 });
@@ -49,28 +58,34 @@ router.post('/multiple', async (req, res, next) => {
 
 const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () => {
   const startVerticesKeys = categoriesKeys.map((k) => `categories/${k}`);
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    LET allKeys = (
-      FOR startVertex IN ${startVerticesKeys}
-        FOR v
-        IN 0..99
-        OUTBOUND startVertex
-        GRAPH ${GRAPH_CATEGORIES}
-          RETURN DISTINCT v._key
-    )
-    FOR n IN ${notesColl}
-      FILTER n.categoryKey IN allKeys
-      SORT RAND()
-      LIMIT 1
-      RETURN {
-        key: n._key,
-        categoryKey: n.categoryKey,
-        data: n.data,
-        rank: n.rank,
-        title: n.title,
-      }
-  `);
+  const cursor = await db.query({
+    query: `
+      LET allKeys = (
+        FOR startVertex IN @startVerticesKeys
+          FOR v
+          IN 0..99
+          OUTBOUND startVertex
+          GRAPH @graph
+            RETURN DISTINCT v._key
+      )
+      FOR n IN @@collection
+        FILTER n.categoryKey IN allKeys
+        SORT RAND()
+        LIMIT 1
+        RETURN {
+          key: n._key,
+          categoryKey: n.categoryKey,
+          data: n.data,
+          rank: n.rank,
+          title: n.title,
+        }
+    `,
+    bindVars: {
+      '@collection': COLL_NOTES,
+      graph: GRAPH_CATEGORIES,
+      startVerticesKeys,
+    },
+  });
   const result = await cursor.all();
   return result[0] || null;
 });
@@ -90,26 +105,32 @@ router.get('/random', async (req, res, next) => {
 
 const readAllNotes = async (db, categoriesKeys) => withErrorHandling(async () => {
   const startVerticesKeys = categoriesKeys.map((k) => `categories/${k}`);
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    LET allKeys = (
-      FOR startVertex IN ${startVerticesKeys}
-        FOR v
-        IN 0..99
-        OUTBOUND startVertex
-        GRAPH ${GRAPH_CATEGORIES}
-          RETURN DISTINCT v._key
-    )
-    FOR n IN ${notesColl}
-      FILTER n.categoryKey IN allKeys
-      RETURN {
-        key: n._key,
-        categoryKey: n.categoryKey,
-        data: n.data,
-        rank: n.rank,
-        title: n.title,
-      }
-  `);
+  const cursor = await db.query({
+    query: `
+      LET allKeys = (
+        FOR startVertex IN @startVerticesKeys
+          FOR v
+          IN 0..99
+          OUTBOUND startVertex
+          GRAPH @graph
+            RETURN DISTINCT v._key
+      )
+      FOR n IN @@collection
+        FILTER n.categoryKey IN allKeys
+        RETURN {
+          key: n._key,
+          categoryKey: n.categoryKey,
+          data: n.data,
+          rank: n.rank,
+          title: n.title,
+        }
+    `,
+    bindVars: {
+      '@collection': COLL_NOTES,
+      graph: GRAPH_CATEGORIES,
+      startVerticesKeys,
+    },
+  });
   const result = await cursor.all();
   return result;
 });
@@ -128,11 +149,17 @@ router.get('/', async (req, res, next) => {
 });
 
 const updateNote = async (db, key, updatedNote) => withErrorHandling(async () => {
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    UPDATE ${key} WITH ${updatedNote} IN ${notesColl}
-    RETURN NEW
-  `);
+  const cursor = await db.query({
+    query: `
+      UPDATE @key WITH @updatedNote IN @@collection
+      RETURN NEW
+    `,
+    bindVars: {
+      '@collection': COLL_NOTES,
+      key,
+      updatedNote,
+    },
+  });
   const result = await cursor.all();
   return result;
 });
@@ -148,12 +175,16 @@ router.put('/:notekey', async (req, res, next) => {
 });
 
 const deleteNote = async (db, key) => withErrorHandling(async () => {
-  const notesColl = db.collection(COLL_NOTES);
-  const cursor = await db.query(aql`
-    REMOVE ${key} IN ${notesColl}
-    LET removed = OLD
-    RETURN removed
-  `);
+  const cursor = await db.query({
+    query: `
+      REMOVE @key IN @@collection
+      RETURN OLD
+    `,
+    bindVars: {
+      '@collection': COLL_NOTES,
+      key,
+    },
+  });
   const result = await cursor.all();
   return result;
 });
