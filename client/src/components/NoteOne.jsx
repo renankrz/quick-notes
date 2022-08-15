@@ -5,7 +5,7 @@ import { readRandomNote } from '../api/notes';
 import Content from './Content';
 
 function NoteOne({ categoriesKeys }) {
-  const [note, setNote] = React.useState([]);
+  const [note, setNote] = React.useState(null);
 
   const { isLoading } = useQuery(
     ['noteOne', categoriesKeys],
