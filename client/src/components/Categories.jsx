@@ -17,7 +17,7 @@ function Categories({
   };
 
   const handleExpandAllClick = () => {
-    setExpanded((oldExpanded) => (oldExpanded.length === 0 ? expandableNodes.current : []));
+    setExpanded((oldExpanded) => (oldExpanded.length === 0 ? expandableNodes : []));
   };
 
   const renderTree = (node) => (
@@ -67,7 +67,7 @@ function Categories({
 }
 
 Categories.propTypes = {
-  categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+  categories: PropTypes.object.isRequired,
   selected: PropTypes.arrayOf(PropTypes.string).isRequired,
   handleSelect: PropTypes.func.isRequired,
   handleSelectAllClick: PropTypes.func.isRequired,

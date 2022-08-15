@@ -25,9 +25,9 @@ function App() {
 
   const query = useQuery(['categories'], readCategoriesRich, {
     onSuccess: (data) => {
-      // Nodes that have children
+      // Keys of nodes that have children
       expandableNodes.current = [...new Set(data.edges.map((e) => e.from))];
-      // All nodes
+      // Keys of all nodes
       selectableNodes.current = data.vertices.map((v) => v.key);
     },
   });
@@ -51,7 +51,7 @@ function App() {
             selected={selected}
             handleSelect={handleSelect}
             handleSelectAllClick={handleSelectAllClick}
-            expandableNodes={expandableNodes}
+            expandableNodes={expandableNodes.current}
           />
         )}
       </div>
