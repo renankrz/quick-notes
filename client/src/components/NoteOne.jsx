@@ -24,9 +24,7 @@ function NoteOne({ categoriesKeys }) {
       <h1 style={{ textAlign: 'center' }}>Random Note</h1>
       {note
         && (
-          <div>
-            <Content content={note.data} />
-          </div>
+          <Content content={note.data} />
         )}
     </div>
   );
