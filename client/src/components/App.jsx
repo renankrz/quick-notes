@@ -1,22 +1,14 @@
 import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
-import Categories from './Categories';
-import NotesAll from './NotesAll';
-import NoteOne from './NoteOne';
 import { readCategoriesRich } from '../api/categories';
-
-const containerStyle = {
-  width: '90%',
-  margin: 'auto',
-  display: 'flex',
-  justifyContent: 'space-between',
-};
-
-const partStyle = {
-  width: '100%',
-  padding: '10px',
-  border: '1px solid grey',
-};
+import Categories from './Categories';
+import Notes from './Notes';
 
 function App() {
   const [selected, setSelected] = React.useState([]);
@@ -41,31 +33,37 @@ function App() {
   };
 
   return (
-    <div style={containerStyle}>
-      <div style={partStyle}>
-        {query.isLoading ? (
-          <h1>Loading</h1>
-        ) : (
-          <Categories
-            categories={query.data.categories}
-            selected={selected}
-            handleSelect={handleSelect}
-            handleSelectAllClick={handleSelectAllClick}
-            expandableNodes={expandableNodes.current}
+    <Container>
+      <Box mb={4}>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6">
+              Quick Notes
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Grid container spacing={8}>
+        <Grid item xs={4}>
+          <Box>
+            {query.isSuccess && (
+              <Categories
+                categories={query.data.categories}
+                selected={selected}
+                handleSelect={handleSelect}
+                handleSelectAllClick={handleSelectAllClick}
+                expandableNodes={expandableNodes.current}
+              />
+            )}
+          </Box>
+        </Grid>
+        <Grid item xs={8}>
+          <Notes
+            categoriesKeys={selected}
           />
-        )}
-      </div>
-      <div style={partStyle}>
-        <NotesAll
-          categoriesKeys={selected}
-        />
-      </div>
-      <div style={partStyle}>
-        <NoteOne
-          categoriesKeys={selected}
-        />
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 

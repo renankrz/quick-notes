@@ -38,7 +38,7 @@ function Categories({
   );
 
   return (
-    <Box sx={{ height: 370, flexGrow: 1, overflow: 'hidden' }}>
+    <Box sx={{ overflow: 'hidden' }}>
       <Box sx={{ mb: 1 }}>
         <Button onClick={handleExpandAllClick}>
           {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
