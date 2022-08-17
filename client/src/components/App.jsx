@@ -1,19 +1,15 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import { Box, Container, Divider } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { readCategoriesRich } from '../api/categories';
 import Categories from './Categories';
+import Header from './Header';
 import Notes from './Notes';
 
 function App() {
   const [selected, setSelected] = React.useState([]);
-  const expandableNodes = React.useRef(null);
-  const selectableNodes = React.useRef(null);
+  const expandableNodes = React.useRef([]);
+  const selectableNodes = React.useRef([]);
 
   const query = useQuery(['categories'], readCategoriesRich, {
     onSuccess: (data) => {
@@ -33,36 +29,32 @@ function App() {
   };
 
   return (
-    <Container>
-      <Box mb={4}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6">
-              Quick Notes
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      <Grid container spacing={8}>
-        <Grid item xs={4}>
-          <Box>
-            {query.isSuccess && (
-              <Categories
-                categories={query.data.categories}
-                selected={selected}
-                handleSelect={handleSelect}
-                handleSelectAllClick={handleSelectAllClick}
-                expandableNodes={expandableNodes.current}
-              />
-            )}
-          </Box>
-        </Grid>
-        <Grid item xs={8}>
+    <Container maxWidth="xl">
+      <Header />
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ minWidth: '280px', minHeight: '80vh' }}>
+          {query.isSuccess && (
+            <Categories
+              categories={query.data.categories}
+              selected={selected}
+              handleSelect={handleSelect}
+              handleSelectAllClick={handleSelectAllClick}
+              expandableNodes={expandableNodes.current}
+            />
+          )}
+        </Box>
+        <Box sx={{
+          display: 'flex', justifyContent: 'space-around', minWidth: '100px',
+        }}
+        >
+          <Divider orientation="vertical" />
+        </Box>
+        <Box width="100%">
           <Notes
             categoriesKeys={selected}
           />
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Container>
   );
 }

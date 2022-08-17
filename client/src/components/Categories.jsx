@@ -1,11 +1,10 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import TreeItem from '@mui/lab/TreeItem';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeView from '@mui/lab/TreeView';
+import { Box, Button } from '@mui/material';
+import StyledTreeItem from './StyledTreeItem';
 
 function Categories({
   categories, selected, handleSelect, handleSelectAllClick, expandableNodes,
@@ -21,29 +20,26 @@ function Categories({
   };
 
   const renderTree = (node) => (
-    <TreeItem
+    <StyledTreeItem
       key={node.key}
       nodeId={node.key}
-      label={node.name}
-      sx={{
-        'user-select': 'none',
-      }}
+      labelText={node.name}
     >
       {
         node.children.length > 0
           ? node.children.map((c) => renderTree(c))
           : null
       }
-    </TreeItem>
+    </StyledTreeItem>
   );
 
   return (
     <Box sx={{ overflow: 'hidden' }}>
-      <Box sx={{ mb: 1 }}>
-        <Button onClick={handleExpandAllClick}>
+      <Box sx={{ mb: 1, display: 'flex' }}>
+        <Button onClick={handleExpandAllClick} sx={{ width: '50%', justifyContent: 'flex-start' }}>
           {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
         </Button>
-        <Button onClick={handleSelectAllClick}>
+        <Button onClick={handleSelectAllClick} sx={{ width: '50%', justifyContent: 'flex-start' }}>
           {selected.length === 0 ? 'Select all' : 'Unselect all'}
         </Button>
       </Box>
