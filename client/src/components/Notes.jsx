@@ -20,6 +20,8 @@ function Notes({ categoriesKeys }) {
     () => readAllNotes(categoriesKeys),
   );
 
+  console.log(queryRandom.data);
+
   return (
     <Box sx={{ mx: 16 }}>
       <Box sx={{ mb: 1 }}>
@@ -34,11 +36,11 @@ function Notes({ categoriesKeys }) {
         mode === 'random'
         && queryRandom.isSuccess
         && queryRandom.data.map((note) => (
-          <Box sx={{ mb: 4 }}>
-            <Card variant="outlined" key={note.key}>
+          <Box sx={{ mb: 4 }} key={note.key}>
+            <Card variant="outlined">
               <CardContent>
                 <Typography sx={{ fontSize: '24px', color: 'dimgray' }}>{note.title}</Typography>
-                <Content content={note.data} />
+                <Content content={note.content} />
               </CardContent>
             </Card>
           </Box>
@@ -48,11 +50,11 @@ function Notes({ categoriesKeys }) {
         mode === 'all'
         && queryAll.isSuccess
         && queryAll.data.map((note) => (
-          <Box sx={{ mb: 4 }}>
-            <Card variant="outlined" key={note.key}>
+          <Box sx={{ mb: 4 }} key={note.key}>
+            <Card variant="outlined">
               <CardContent>
                 <Typography sx={{ fontSize: '24px', color: 'dimgray' }}>{note.title}</Typography>
-                <Content content={note.data} />
+                <Content content={note.content} />
               </CardContent>
             </Card>
           </Box>

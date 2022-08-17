@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { Box, Container, Divider } from '@mui/material';
+import {
+  Box, Button, Container, Divider,
+} from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { readCategoriesRich } from '../api/categories';
+import { createNote } from '../api/notes';
 import Categories from './Categories';
+import Form from './Form';
 import Header from './Header';
 import Notes from './Notes';
 
 function App() {
+  const [mode, setMode] = React.useState('view');
   const [selected, setSelected] = React.useState([]);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
@@ -26,6 +31,15 @@ function App() {
 
   const handleSelectAllClick = () => {
     setSelected((oldSelected) => (oldSelected.length === 0 ? selectableNodes.current : []));
+  };
+
+  const handleToggleMode = () => {
+    setMode(mode === 'view' ? 'create' : 'view');
+  };
+
+  const handleCreateNoteClick = async (data) => {
+    await createNote(data);
+    setMode('view');
   };
 
   return (
@@ -50,9 +64,20 @@ function App() {
           <Divider orientation="vertical" />
         </Box>
         <Box width="100%">
-          <Notes
-            categoriesKeys={selected}
-          />
+          <Button onClick={handleToggleMode}>Toggle mode</Button>
+          {mode === 'view'
+            && (
+              <Notes
+                categoriesKeys={selected}
+              />
+            )}
+          {mode === 'create'
+            && (
+              <Form
+                text="CREATE"
+                submit={handleCreateNoteClick}
+              />
+            )}
         </Box>
       </Box>
     </Container>
