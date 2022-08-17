@@ -75,7 +75,7 @@ const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () 
         RETURN {
           key: n._key,
           categoryKey: n.categoryKey,
-          data: n.data,
+          content: n.content,
           rank: n.rank,
           title: n.title,
         }
@@ -120,7 +120,7 @@ const readAllNotes = async (db, categoriesKeys) => withErrorHandling(async () =>
         RETURN {
           key: n._key,
           categoryKey: n.categoryKey,
-          data: n.data,
+          content: n.content,
           rank: n.rank,
           title: n.title,
         }
