@@ -1,0 +1,90 @@
+.content {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #444;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+.content p,
+.content ol,
+.content ul,
+.content-code
+{
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6
+{
+  margin-top: 20px;
+  font-family: sans-serif;
+}
+
+.content p,
+.content li
+{
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+.content ol {
+  margin-left: 21px;
+}
+
+.content ul {
+  margin-left: 16px;
+}
+
+.content h1 code,
+.content h2 code,
+.content h3 code,
+.content h4 code,
+.content h5 code,
+.content h6 code,
+.content p code {
+  background-color: #DDD;
+  padding: 0 5px;
+  border-radius: 5px;
+  font-weight: normal;
+}
+
+.content-code {
+  border-radius: 5px;
+  overflow: hidden;
+  line-height: 20px;
+}
+
+/*
+ * Overwrite styles defined by react-syntax-highlighter
+ */
+
+.linenumber {
+  position: relative;
+  top: 1px;
+  /* Overwrite inline styles */
+  min-width: 2.25em !important;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.buttons-container img {
+  padding-left: 10px;
+}
+
+.buttons-container img:hover {
+  cursor: pointer;
+}

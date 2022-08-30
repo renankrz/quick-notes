@@ -7,6 +7,7 @@ import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import rehypeKatex from 'rehype-katex';
 
 import 'katex/dist/katex.min.css';
+import './style/Content.css';
 
 const components = {
   code({ node, className, ...props }) {
@@ -14,7 +15,7 @@ const components = {
     const match = /language-(\w+)/.exec(className || '');
     return match
       ? (
-        <div className="markdown-code">
+        <div className="content-code">
           <SyntaxHighlighter
             language={match[1]}
             style={nightOwl}
