@@ -7,13 +7,20 @@ import Content from './Content';
 
 function Notes({ notes }) {
   return (
-    <Box sx={{ mx: 16 }}>
+    <Box>
       {
         notes.map((note) => (
           <Box sx={{ mb: 4 }} key={note.key}>
-            <Card variant="outlined">
+            <Card variant="elevation">
+              <Box sx={{
+                background: '#F2F2F2', padding: 2, paddingBottom: 2,
+              }}
+              >
+                <Typography variant="h5" sx={{ color: '#6977C9' }}>
+                  {note.title}
+                </Typography>
+              </Box>
               <CardContent>
-                <Typography sx={{ fontSize: '24px', color: 'dimgray' }}>{note.title}</Typography>
                 <Content content={note.content} />
               </CardContent>
             </Card>

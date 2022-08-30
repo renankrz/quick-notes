@@ -88,7 +88,7 @@ function App() {
         >
           <Divider orientation="vertical" />
         </Box>
-        <Box width="100%">
+        <Box sx={{ width: '66.7%', margin: '0 auto' }}>
           <Box sx={{ mb: 1, display: 'flex' }}>
             <Button onClick={handleAllClick} sx={{ width: '120px' }}>get all</Button>
             <Button onClick={handleRandomClick} sx={{ width: '120px' }}>get random</Button>
