@@ -10,6 +10,8 @@ import Form from './Form';
 import Header from './Header';
 import Notes from './Notes';
 
+import './style/App.css';
+
 function App() {
   const [interactionMode, setInteractionMode] = React.useState('view');
   const [notesViewMode, setNotesViewMode] = React.useState('random');
