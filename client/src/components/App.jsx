@@ -55,7 +55,11 @@ function App() {
   };
 
   const handleRandomClick = () => {
-    setNotesViewMode('random');
+    if (notesViewMode === 'random') {
+      queryRandom.refetch();
+    } else {
+      setNotesViewMode('random');
+    }
   };
 
   const handleCreateNoteClick = async (data) => {
