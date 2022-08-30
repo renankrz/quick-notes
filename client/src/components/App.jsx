@@ -4,19 +4,20 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { readCategoriesRich } from '../api/categories';
-import { createNote } from '../api/notes';
+import { createNote, readAllNotes, readRandomNote } from '../api/notes';
 import Categories from './Categories';
 import Form from './Form';
 import Header from './Header';
 import Notes from './Notes';
 
 function App() {
-  const [mode, setMode] = React.useState('view');
-  const [selected, setSelected] = React.useState([]);
+  const [interactionMode, setInteractionMode] = React.useState('view');
+  const [notesViewMode, setNotesViewMode] = React.useState('random');
+  const [selectedCategories, setSelectedCategories] = React.useState([]);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
 
-  const query = useQuery(['categories'], readCategoriesRich, {
+  const queryCategories = useQuery(['categories'], readCategoriesRich, {
     onSuccess: (data) => {
       // Keys of nodes that have children
       expandableNodes.current = [...new Set(data.edges.map((e) => e.from))];
@@ -25,21 +26,39 @@ function App() {
     },
   });
 
-  const handleSelect = (event, nodeIds) => {
-    setSelected(nodeIds);
-  };
+  const queryRandom = useQuery(
+    ['queryRandom', selectedCategories],
+    () => readRandomNote(selectedCategories),
+  );
+
+  const queryAll = useQuery(
+    ['queryAll', selectedCategories],
+    () => readAllNotes(selectedCategories),
+  );
 
   const handleSelectAllClick = () => {
-    setSelected((oldSelected) => (oldSelected.length === 0 ? selectableNodes.current : []));
+    setSelectedCategories((old) => (old.length === 0 ? selectableNodes.current : []));
   };
 
-  const handleToggleMode = () => {
-    setMode(mode === 'view' ? 'create' : 'view');
+  const handleSelect = (event, nodeIds) => {
+    setSelectedCategories(nodeIds);
+  };
+
+  const handleToggleModeClick = () => {
+    setInteractionMode(interactionMode === 'view' ? 'create' : 'view');
+  };
+
+  const handleAllClick = () => {
+    setNotesViewMode('all');
+  };
+
+  const handleRandomClick = () => {
+    setNotesViewMode('random');
   };
 
   const handleCreateNoteClick = async (data) => {
     await createNote(data);
-    setMode('view');
+    setInteractionMode('view');
   };
 
   return (
@@ -47,10 +66,10 @@ function App() {
       <Header />
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ minWidth: '280px', minHeight: '80vh' }}>
-          {query.isSuccess && (
+          {queryCategories.isSuccess && (
             <Categories
-              categories={query.data.categories}
-              selected={selected}
+              categories={queryCategories.data.categories}
+              selected={selectedCategories}
               handleSelect={handleSelect}
               handleSelectAllClick={handleSelectAllClick}
               expandableNodes={expandableNodes.current}
@@ -64,14 +83,22 @@ function App() {
           <Divider orientation="vertical" />
         </Box>
         <Box width="100%">
-          <Button onClick={handleToggleMode}>Toggle mode</Button>
-          {mode === 'view'
+          <Box sx={{ mb: 1, display: 'flex' }}>
+            <Button onClick={handleAllClick} sx={{ width: '120px' }}>get all</Button>
+            <Button onClick={handleRandomClick} sx={{ width: '120px' }}>get random</Button>
+            <Button onClick={handleToggleModeClick} sx={{ width: '120px' }}>
+              {interactionMode === 'view' ? 'create new' : 'view notes'}
+            </Button>
+          </Box>
+          {interactionMode === 'view'
             && (
-              <Notes
-                categoriesKeys={selected}
-              />
+              !(queryAll.isLoading || queryRandom.isLoading) && (
+                <Notes
+                  notes={notesViewMode === 'all' ? queryAll.data : queryRandom.data}
+                />
+              )
             )}
-          {mode === 'create'
+          {interactionMode === 'create'
             && (
               <Form
                 text="CREATE"

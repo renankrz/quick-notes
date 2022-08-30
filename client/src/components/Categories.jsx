@@ -36,11 +36,11 @@ function Categories({
   return (
     <Box sx={{ overflow: 'hidden' }}>
       <Box sx={{ mb: 1, display: 'flex' }}>
-        <Button onClick={handleExpandAllClick} sx={{ width: '50%', justifyContent: 'flex-start' }}>
-          {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
+        <Button onClick={handleExpandAllClick} sx={{ width: '50%' }}>
+          {expanded.length === 0 ? 'expand all' : 'collapse all'}
         </Button>
-        <Button onClick={handleSelectAllClick} sx={{ width: '50%', justifyContent: 'flex-start' }}>
-          {selected.length === 0 ? 'Select all' : 'Unselect all'}
+        <Button onClick={handleSelectAllClick} sx={{ width: '50%' }}>
+          {selected.length === 0 ? 'select all' : 'unselect all'}
         </Button>
       </Box>
       <TreeView
