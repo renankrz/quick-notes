@@ -1,92 +1,115 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import { Box, Button, TextField } from '@mui/material';
 
-function Form({ noteData, text, submit }) {
-  const { register, handleSubmit } = useForm({
-    defaultValues: noteData,
+function Form({ notePrefilledData, submit, submitButtonText }) {
+  const { control, handleSubmit } = useForm({
+    defaultValues: notePrefilledData,
   });
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
 
-  const onClickSubmit = (content) => {
+  const handleSubmitClick = (data) => {
     try {
-      setLoading(true);
-      if (noteData.id === '') {
+      if (notePrefilledData.key === '') {
         // Creating
-        submit(content);
+        submit(data);
       } else {
         // Updating
-        submit(noteData.id, content);
+        // submit(notePrefilledData.id, data);
       }
     } catch (err) {
-      setError(err.message);
-      setLoading(false);
+      console.error(err.message);
     }
   };
 
   return (
-    <div className="form-container dark-bg">
-      <form className="form" onSubmit={handleSubmit(onClickSubmit)}>
-        {error ? <h3 className="error">{error}</h3> : null}
-
-        <div className="field">
-          <label htmlFor="categoryKey">
-            <p className="label">Category key</p>
-            <input type="text" id="categoryKey" name="categoryKey" {...register('categoryKey')} />
-          </label>
-        </div>
-
-        <div className="field">
-          <label htmlFor="title">
-            <p className="label">Title</p>
-            <input type="text" id="title" name="title" {...register('title')} />
-          </label>
-        </div>
-
-        <div className="field">
-          <label htmlFor="rank">
-            <p className="label">Rank</p>
-            <input type="text" id="rank" name="rank" {...register('rank')} />
-          </label>
-        </div>
-
-        <div className="field">
-          <label htmlFor="content">
-            <p className="label">Content</p>
-            <textarea id="content" name="content" {...register('content')} />
-          </label>
-        </div>
-
-        <input
-          type="submit"
-          disabled={loading}
-          value={loading ? 'Loading...' : text}
+    <Box>
+      <Box display="grid" gridTemplateColumns="1fr 1fr" gap="0 20px">
+        <Controller
+          name="categoryKey"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Category key"
+              size="small"
+              margin="dense"
+              {...field}
+            />
+          )}
         />
-      </form>
-    </div>
+        <Controller
+          name="rank"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Rank"
+              size="small"
+              margin="dense"
+              {...field}
+            />
+          )}
+        />
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Title"
+              margin="normal"
+              size="small"
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          name="content"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              label="Content"
+              margin="normal"
+              multiline
+              rows={8}
+              placeholder="LaTeX, Markdown, code..."
+              {...field}
+            />
+          )}
+        />
+        <Button
+          fullWidth
+          onClick={handleSubmit(handleSubmitClick)}
+          size="large"
+          variant="outlined"
+          sx={{ marginTop: 2 }}
+        >
+          {submitButtonText}
+        </Button>
+      </Box>
+    </Box>
   );
 }
 
 Form.propTypes = {
-  noteData: PropTypes.shape({
-    id: PropTypes.string,
+  notePrefilledData: PropTypes.shape({
     categoryKey: PropTypes.string,
-    title: PropTypes.string,
-    rank: PropTypes.number,
     content: PropTypes.string,
+    key: PropTypes.string,
+    rank: PropTypes.number,
+    title: PropTypes.string,
   }),
-  text: PropTypes.string.isRequired,
   submit: PropTypes.func.isRequired,
+  submitButtonText: PropTypes.string.isRequired,
 };
 
 Form.defaultProps = {
-  noteData: {
-    id: '',
+  notePrefilledData: {
     categoryKey: '',
-    title: '',
-    rank: 0,
     content: '',
+    key: '',
+    rank: 0,
+    title: '',
   },
 };
 

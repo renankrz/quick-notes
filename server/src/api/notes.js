@@ -6,6 +6,10 @@ const { withErrorHandling } = require('../utils');
 const router = Router();
 
 const createNote = async (db, note) => withErrorHandling(async () => {
+  const correctlyTypedData = {
+    ...note,
+    rank: parseInt(note.rank, 10),
+  };
   const cursor = await db.query({
     query: `
       INSERT @note INTO @@collection
@@ -13,7 +17,7 @@ const createNote = async (db, note) => withErrorHandling(async () => {
     `,
     bindVars: {
       '@collection': COLL_NOTES,
-      note,
+      note: correctlyTypedData,
     },
   });
   const result = await cursor.all();

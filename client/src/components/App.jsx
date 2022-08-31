@@ -117,8 +117,8 @@ function App() {
           {interactionMode === 'create'
             && (
               <Form
-                text="CREATE"
                 submit={handleCreateNoteClick}
+                submitButtonText="create"
               />
             )}
         </Box>
