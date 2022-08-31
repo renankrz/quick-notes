@@ -86,12 +86,46 @@ const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
       graph: GRAPH_CATEGORIES,
     },
   });
+  const pathsCursor = await db.query({
+    query: `
+      LET rootArray = (
+        FOR c IN @@collection
+        FILTER c.name == 'root'
+        LIMIT 1
+          RETURN c
+      )
+      LET root = rootArray[0]
+      LET firstLevelCategories = (
+        FOR v
+        IN 1..1
+        OUTBOUND root._id
+        GRAPH @graph
+          RETURN v
+      )
+      FOR c IN firstLevelCategories
+        FOR v, e, p
+        IN 0..99
+        OUTBOUND c._id
+        GRAPH @graph
+          RETURN p.vertices
+    `,
+    bindVars: {
+      '@collection': COLL_CATEGORIES,
+      graph: GRAPH_CATEGORIES,
+    },
+  });
 
   const vertices = await verticesCursor.all();
   const edges = (await edgesCursor.all()).reverse().map((e) => ({
     from: e.from.split('/')[1],
     to: e.to.split('/')[1],
   }));
+  const paths = (await pathsCursor.all()).map((p) => (
+    {
+      key: p.slice(-1)[0]._key,
+      names: p.map((v) => v.name),
+    }
+  ));
   const categories = vertices.map((v) => ({
     ...v,
     children: [],
@@ -111,8 +145,9 @@ const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
   }
 
   return {
-    categories: categories[0],
     edges,
+    categories: categories[0],
+    paths,
     vertices,
   };
 });

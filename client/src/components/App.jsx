@@ -19,11 +19,14 @@ function App() {
   const [notesViewMode, setNotesViewMode] = React.useState('random');
   const [noteToEdit, setNoteToEdit] = React.useState(null);
   const [selectedCategories, setSelectedCategories] = React.useState([]);
+  const categoriesPaths = React.useRef([]);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
 
   const queryCategories = useQuery(['categories'], readCategoriesRich, {
     onSuccess: (data) => {
+      // All categories with key and name
+      categoriesPaths.current = data.paths;
       // Keys of nodes that have children
       expandableNodes.current = [...new Set(data.edges.map((e) => e.from))];
       // Keys of all nodes
@@ -141,6 +144,7 @@ function App() {
           {interactionMode === 'create'
             && (
               <Form
+                categoriesPaths={categoriesPaths.current}
                 submit={handleCreateNoteClick}
                 submitButtonText="create"
               />
@@ -148,6 +152,7 @@ function App() {
           {interactionMode === 'edit'
             && (
               <Form
+                categoriesPaths={categoriesPaths.current}
                 notePrefilledData={noteToEdit}
                 submit={handleEditNoteClick}
                 submitButtonText="save"

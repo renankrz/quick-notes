@@ -1,9 +1,13 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Button, TextField } from '@mui/material';
+import {
+  Box, Button, MenuItem, TextField,
+} from '@mui/material';
 
-function Form({ notePrefilledData, submit, submitButtonText }) {
+function Form({
+  categoriesPaths, notePrefilledData, submit, submitButtonText,
+}) {
   const { control, handleSubmit } = useForm({
     defaultValues: notePrefilledData,
   });
@@ -30,11 +34,27 @@ function Form({ notePrefilledData, submit, submitButtonText }) {
           control={control}
           render={({ field }) => (
             <TextField
-              label="Category key"
-              size="small"
+              defaultValue=""
+              label="Select a category"
               margin="dense"
+              select
+              size="small"
               {...field}
-            />
+            >
+              {categoriesPaths.map((c) => (
+                <MenuItem
+                  key={c.key}
+                  value={c.key}
+                >
+                  {
+                    c.names.reduce(
+                      (previousValue, currentValue) => `${previousValue} > ${currentValue}`,
+                      '',
+                    ).slice(3)
+                  }
+                </MenuItem>
+              ))}
+            </TextField>
           )}
         />
         <Controller
@@ -92,6 +112,10 @@ function Form({ notePrefilledData, submit, submitButtonText }) {
 }
 
 Form.propTypes = {
+  categoriesPaths: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    names: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  }).isRequired).isRequired,
   notePrefilledData: PropTypes.shape({
     categoryKey: PropTypes.string,
     content: PropTypes.string,
