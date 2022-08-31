@@ -15,7 +15,7 @@ function Form({ notePrefilledData, submit, submitButtonText }) {
         submit(data);
       } else {
         // Updating
-        // submit(notePrefilledData.id, data);
+        submit(notePrefilledData.key, data);
       }
     } catch (err) {
       console.error(err.message);

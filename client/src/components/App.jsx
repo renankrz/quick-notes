@@ -5,7 +5,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { readCategoriesRich } from '../api/categories';
 import {
-  createNote, deleteNote, readAllNotes, readRandomNote,
+  createNote, deleteNote, readAllNotes, readRandomNote, updateNote,
 } from '../api/notes';
 import Categories from './Categories';
 import Form from './Form';
@@ -17,6 +17,7 @@ import './style/App.css';
 function App() {
   const [interactionMode, setInteractionMode] = React.useState('view');
   const [notesViewMode, setNotesViewMode] = React.useState('random');
+  const [noteToEdit, setNoteToEdit] = React.useState(null);
   const [selectedCategories, setSelectedCategories] = React.useState([]);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
@@ -74,6 +75,16 @@ function App() {
     }
   };
 
+  const handleEditNoteClick = async (key, data) => {
+    await updateNote(key, data);
+    setInteractionMode('view');
+    if (notesViewMode === 'all') {
+      await queryAll.refetch();
+    } else {
+      await queryRandom.refetch();
+    }
+  };
+
   const handleDeleteClick = async (key) => {
     await deleteNote(key);
     if (notesViewMode === 'all') {
@@ -84,7 +95,8 @@ function App() {
   };
 
   const handleEditClick = async (note) => {
-    console.log(note);
+    setNoteToEdit(note);
+    setInteractionMode('edit');
   };
 
   return (
@@ -131,6 +143,14 @@ function App() {
               <Form
                 submit={handleCreateNoteClick}
                 submitButtonText="create"
+              />
+            )}
+          {interactionMode === 'edit'
+            && (
+              <Form
+                notePrefilledData={noteToEdit}
+                submit={handleEditNoteClick}
+                submitButtonText="save"
               />
             )}
         </Box>

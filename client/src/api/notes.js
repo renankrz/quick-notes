@@ -28,13 +28,13 @@ export async function readRandomNote(categoriesKeys) {
   return response.json();
 }
 
-export async function updateNote(key, updates) {
+export async function updateNote(key, updatedNote) {
   const response = await fetch(`${API_URL}/${key}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(updates),
+    body: JSON.stringify(updatedNote),
   });
   return response.json();
 }
