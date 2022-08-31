@@ -40,5 +40,11 @@ module.exports = {
         'jsx-a11y/no-noninteractive-element-to-interactive-role': 'off',
       },
     },
+    {
+      files: ['Form.jsx'],
+      rules: {
+        'react/jsx-props-no-spreading': 'off',
+      },
+    },
   ],
 };
