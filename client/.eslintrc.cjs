@@ -33,5 +33,12 @@ module.exports = {
         'react/prop-types': 'off',
       },
     },
+    {
+      files: ['Notes.jsx'],
+      rules: {
+        'jsx-a11y/click-events-have-key-events': 'off',
+        'jsx-a11y/no-noninteractive-element-to-interactive-role': 'off',
+      },
+    },
   ],
 };
