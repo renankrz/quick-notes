@@ -4,7 +4,9 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { readCategoriesRich } from '../api/categories';
-import { createNote, readAllNotes, readRandomNote } from '../api/notes';
+import {
+  createNote, deleteNote, readAllNotes, readRandomNote,
+} from '../api/notes';
 import Categories from './Categories';
 import Form from './Form';
 import Header from './Header';
@@ -54,9 +56,9 @@ function App() {
     setNotesViewMode('all');
   };
 
-  const handleRandomClick = () => {
+  const handleRandomClick = async () => {
     if (notesViewMode === 'random') {
-      queryRandom.refetch();
+      await queryRandom.refetch();
     } else {
       setNotesViewMode('random');
     }
@@ -65,10 +67,20 @@ function App() {
   const handleCreateNoteClick = async (data) => {
     await createNote(data);
     setInteractionMode('view');
+    if (notesViewMode === 'all') {
+      await queryAll.refetch();
+    } else {
+      await queryRandom.refetch();
+    }
   };
 
   const handleDeleteClick = async (key) => {
-    console.log(key);
+    await deleteNote(key);
+    if (notesViewMode === 'all') {
+      await queryAll.refetch();
+    } else {
+      await queryRandom.refetch();
+    }
   };
 
   const handleEditClick = async (note) => {
