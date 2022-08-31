@@ -67,23 +67,11 @@ const readAllCategoriesRich = async (db) => withErrorHandling(async () => {
   });
   const edgesCursor = await db.query({
     query: `
-      LET rootArray = (
-        FOR c IN @@collection
-          FILTER c.name == 'root'
-          LIMIT 1
-          RETURN c
-      )
-      LET root = rootArray[0]
-      FOR v, e
-      IN 1..99
-      OUTBOUND root._id
-      GRAPH @graph
-      OPTIONS { order: 'bfs' }
+      FOR e IN @@collection
         RETURN { from: e._from, to: e._to }
     `,
     bindVars: {
-      '@collection': COLL_CATEGORIES,
-      graph: GRAPH_CATEGORIES,
+      '@collection': COLL_HAS_SUBCATEGORY,
     },
   });
   const pathsCursor = await db.query({
