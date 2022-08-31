@@ -153,6 +153,10 @@ router.get('/', async (req, res, next) => {
 });
 
 const updateNote = async (db, key, updatedNote) => withErrorHandling(async () => {
+  const correctlyTypedData = {
+    ...updatedNote,
+    rank: parseInt(updatedNote.rank, 10),
+  };
   const cursor = await db.query({
     query: `
       UPDATE @key WITH @updatedNote IN @@collection
@@ -161,7 +165,7 @@ const updateNote = async (db, key, updatedNote) => withErrorHandling(async () =>
     bindVars: {
       '@collection': COLL_NOTES,
       key,
-      updatedNote,
+      updatedNote: correctlyTypedData,
     },
   });
   const result = await cursor.all();
