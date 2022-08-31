@@ -130,7 +130,7 @@ function App() {
           </Box>
           {interactionMode === 'view'
             && (
-              !(queryAll.isLoading || queryRandom.isLoading) && (
+              (queryAll.fetchStatus === 'idle' && queryRandom.fetchStatus === 'idle') && (
                 <Notes
                   notes={notesViewMode === 'all' ? queryAll.data : queryRandom.data}
                   deleteNote={handleDeleteClick}
