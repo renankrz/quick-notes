@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { tomorrowNightBlue } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { googlecode } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import rehypeKatex from 'rehype-katex';
 
 import 'katex/dist/katex.min.css';
@@ -18,7 +18,7 @@ const components = {
         <div className="content-code">
           <SyntaxHighlighter
             language={match[1]}
-            style={tomorrowNightBlue}
+            style={googlecode}
             showLineNumbers="true"
             {...props}
           />
