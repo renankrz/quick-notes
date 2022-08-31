@@ -75,17 +75,3 @@
   /* Overwrite inline styles */
   min-width: 2.25em !important;
 }
-
-.buttons-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-.buttons-container img {
-  padding-left: 10px;
-}
-
-.buttons-container img:hover {
-  cursor: pointer;
-}

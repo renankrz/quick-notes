@@ -67,6 +67,14 @@ function App() {
     setInteractionMode('view');
   };
 
+  const handleDeleteClick = async (key) => {
+    console.log(key);
+  };
+
+  const handleEditClick = async (note) => {
+    console.log(note);
+  };
+
   return (
     <Container maxWidth="xl">
       <Header />
@@ -101,6 +109,8 @@ function App() {
               !(queryAll.isLoading || queryRandom.isLoading) && (
                 <Notes
                   notes={notesViewMode === 'all' ? queryAll.data : queryRandom.data}
+                  deleteNote={handleDeleteClick}
+                  editNote={handleEditClick}
                 />
               )
             )}

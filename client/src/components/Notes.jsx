@@ -1,11 +1,13 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
-  Box, Card, CardContent, Typography,
+  Box, Card, CardContent, IconButton, Tooltip, Typography,
 } from '@mui/material';
 import Content from './Content';
 
-function Notes({ notes }) {
+function Notes({ notes, deleteNote, editNote }) {
   return (
     <Box>
       {
@@ -20,9 +22,30 @@ function Notes({ notes }) {
                   {note.title}
                 </Typography>
               </Box>
-              <CardContent>
+              <CardContent sx={{
+                paddingTop: 0,
+              }}
+              >
                 <Content content={note.content} />
               </CardContent>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                paddingRight: '4px',
+                paddingBottom: '4px',
+              }}
+              >
+                <Tooltip title="Edit">
+                  <IconButton onClick={() => editNote(note)}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => deleteNote(note.key)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             </Card>
           </Box>
         ))
@@ -39,6 +62,8 @@ Notes.propTypes = {
     rank: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
   }).isRequired).isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  editNote: PropTypes.func.isRequired,
 };
 
 export default Notes;
