@@ -34,6 +34,12 @@ module.exports = {
       },
     },
     {
+      files: ['Form.jsx'],
+      rules: {
+        'react/jsx-props-no-spreading': 'off',
+      },
+    },
+    {
       files: ['Notes.jsx'],
       rules: {
         'jsx-a11y/click-events-have-key-events': 'off',
@@ -41,7 +47,7 @@ module.exports = {
       },
     },
     {
-      files: ['Form.jsx'],
+      files: ['StyledTreeItem.jsx'],
       rules: {
         'react/jsx-props-no-spreading': 'off',
       },
