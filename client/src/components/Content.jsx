@@ -34,7 +34,7 @@ function Content({ content }) {
       className="content"
       components={components}
       remarkPlugins={[remarkMath]}
-      rehypePlugins={[rehypeKatex]}
+      rehypePlugins={[[rehypeKatex, { trust: true }]]}
     >
       {content}
     </ReactMarkdown>
