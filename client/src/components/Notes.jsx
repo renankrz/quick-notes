@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
-  Box, Card, CardContent, IconButton, Tooltip, Typography,
+  Box, Card, CardContent, Container, IconButton, Tooltip, Typography,
 } from '@mui/material';
 import Content from './Content';
 
 function Notes({ notes, deleteNote, editNote }) {
   return (
-    <Box>
+    <Container sx={{ maxHeight: '75vh', overflow: 'auto' }}>
       {
         notes.map((note) => (
           <Box sx={{ mb: 4 }} key={note.key}>
@@ -50,7 +50,7 @@ function Notes({ notes, deleteNote, editNote }) {
           </Box>
         ))
       }
-    </Box>
+    </Container>
   );
 }
 
