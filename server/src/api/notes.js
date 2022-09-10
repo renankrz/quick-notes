@@ -73,9 +73,9 @@ const readRandomNote = async (db, categoriesKeys) => withErrorHandling(async () 
             RETURN DISTINCT v._key
       )
       FOR n IN @@collection
-        FILTER n.categoryKey IN allKeys
-        SORT RAND()
-        LIMIT 1
+      FILTER n.categoryKey IN allKeys
+      SORT RAND()
+      LIMIT 1
         RETURN {
           key: n._key,
           categoryKey: n.categoryKey,
@@ -120,7 +120,8 @@ const readAllNotes = async (db, categoriesKeys) => withErrorHandling(async () =>
             RETURN DISTINCT v._key
       )
       FOR n IN @@collection
-        FILTER n.categoryKey IN allKeys
+      FILTER n.categoryKey IN allKeys
+      SORT n.rank
         RETURN {
           key: n._key,
           categoryKey: n.categoryKey,
