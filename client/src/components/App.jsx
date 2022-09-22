@@ -18,6 +18,7 @@ function App() {
   const [interactionMode, setInteractionMode] = React.useState('view');
   const [notesViewMode, setNotesViewMode] = React.useState('random');
   const [noteToEdit, setNoteToEdit] = React.useState(null);
+  const [expandedCategories, setExpandedCategories] = React.useState([]);
   const [selectedCategories, setSelectedCategories] = React.useState([]);
   const categoriesPaths = React.useRef([]);
   const expandableNodes = React.useRef([]);
@@ -44,12 +45,20 @@ function App() {
     () => readAllNotes(selectedCategories),
   );
 
-  const handleSelectAllClick = () => {
-    setSelectedCategories((old) => (old.length === 0 ? selectableNodes.current : []));
+  const handleExpand = (event, nodeIds) => {
+    setExpandedCategories(nodeIds);
+  };
+
+  const handleExpandAllClick = () => {
+    setExpandedCategories((old) => (old.length === 0 ? expandableNodes.current : []));
   };
 
   const handleSelect = (event, nodeIds) => {
     setSelectedCategories(nodeIds);
+  };
+
+  const handleSelectAllClick = () => {
+    setSelectedCategories((old) => (old.length === 0 ? selectableNodes.current : []));
   };
 
   const handleToggleModeClick = () => {
@@ -110,10 +119,12 @@ function App() {
           {queryCategories.isSuccess && (
             <Categories
               categories={queryCategories.data.categories}
+              expanded={expandedCategories}
+              handleExpand={handleExpand}
+              handleExpandAllClick={handleExpandAllClick}
               selected={selectedCategories}
               handleSelect={handleSelect}
               handleSelectAllClick={handleSelectAllClick}
-              expandableNodes={expandableNodes.current}
             />
           )}
         </Box>

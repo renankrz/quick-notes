@@ -7,18 +7,8 @@ import { Box, Button } from '@mui/material';
 import StyledTreeItem from './StyledTreeItem';
 
 function Categories({
-  categories, selected, handleSelect, handleSelectAllClick, expandableNodes,
+  categories, expanded, handleExpand, handleExpandAllClick, selected, handleSelect, handleSelectAllClick, 
 }) {
-  const [expanded, setExpanded] = React.useState([]);
-
-  const handleExpand = (event, nodeIds) => {
-    setExpanded(nodeIds);
-  };
-
-  const handleExpandAllClick = () => {
-    setExpanded((oldExpanded) => (oldExpanded.length === 0 ? expandableNodes : []));
-  };
-
   const renderTree = (node) => (
     <StyledTreeItem
       key={node.key}
@@ -65,9 +55,10 @@ function Categories({
 Categories.propTypes = {
   categories: PropTypes.object.isRequired,
   selected: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleExpand: PropTypes.func.isRequired,
+  handleExpandAllClick: PropTypes.func.isRequired,
   handleSelect: PropTypes.func.isRequired,
   handleSelectAllClick: PropTypes.func.isRequired,
-  expandableNodes: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Categories;
