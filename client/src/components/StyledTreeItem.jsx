@@ -1,9 +1,9 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
-import Typography from '@mui/material/Typography';
+import { Box, Typography } from '@mui/material';
+import { TreeItem } from '@mui/lab';
+import { treeItemClasses } from '@mui/lab/TreeItem';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
