@@ -49,7 +49,21 @@ Just enter regular markdown.
 
 ## Dev
 
-First write your own `.env` file based on the [example][1]. Then start the server:
+Prerequisites:
+
+* ArangoDB
+* Node.js 14 or greater
+* yarn
+
+1) in ArangoDB, create:
+  1.1) a new database
+  1.2) a collection named "categories"
+  1.3) a collection named "notes"
+  1.4) an edge collection named "hasSubcategory"
+  1.5) a graph from "categories" to "categories" with edges "hasSubcategory"
+2) write your own `.env` files based on the examples given [here][1] and [here][2].
+
+### Start the server:
 
 ```
 $ cd server
@@ -57,7 +71,7 @@ $ yarn
 $ yarn dev
 ```
 
-Start the client:
+### Start the client:
 
 ```
 $ cd client
@@ -125,4 +139,5 @@ $ pm2 save
 
 The app is now available at http://localhost:3000/ at every system boot.
 
-[1]: https://github.com/renankrz/quick-notes/blob/main/server/.env.example
+[1]: https://github.com/renankrz/quick-notes/blob/main/client/.env.example
+[2]: https://github.com/renankrz/quick-notes/blob/main/server/.env.example
