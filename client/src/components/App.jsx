@@ -115,7 +115,7 @@ function App() {
     <Container maxWidth="xl">
       <Header />
       <Box sx={{ display: 'flex' }}>
-        <Box sx={{ minWidth: '280px', minHeight: '80vh' }}>
+        <Box sx={{ width: '300px', height: '80vh', overflow: 'auto' }}>
           {queryCategories.isSuccess && (
             <Categories
               categories={queryCategories.data.categories}
