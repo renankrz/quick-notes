@@ -1,12 +1,13 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import {
-  Box, Button, MenuItem, TextField,
-} from '@mui/material';
+import * as React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
+import { Box, Button, MenuItem, TextField } from "@mui/material";
 
 function Form({
-  categoriesPaths, notePrefilledData, submit, submitButtonText,
+  categoriesPaths,
+  notePrefilledData,
+  submit,
+  submitButtonText,
 }) {
   const { control, handleSubmit } = useForm({
     defaultValues: notePrefilledData,
@@ -14,7 +15,7 @@ function Form({
 
   const handleSubmitClick = (data) => {
     try {
-      if (notePrefilledData.key === '') {
+      if (notePrefilledData.key === "") {
         // Creating
         submit(data);
       } else {
@@ -42,16 +43,14 @@ function Form({
               {...field}
             >
               {categoriesPaths.map((c) => (
-                <MenuItem
-                  key={c.key}
-                  value={c.key}
-                >
-                  {
-                    c.names.reduce(
-                      (previousValue, currentValue) => `${previousValue} > ${currentValue}`,
-                      '',
-                    ).slice(3)
-                  }
+                <MenuItem key={c.key} value={c.key}>
+                  {c.names
+                    .reduce(
+                      (previousValue, currentValue) =>
+                        `${previousValue} > ${currentValue}`,
+                      ""
+                    )
+                    .slice(3)}
                 </MenuItem>
               ))}
             </TextField>
@@ -61,26 +60,16 @@ function Form({
           name="rank"
           control={control}
           render={({ field }) => (
-            <TextField
-              label="Rank"
-              size="small"
-              margin="dense"
-              {...field}
-            />
+            <TextField label="Rank" size="small" margin="dense" {...field} />
           )}
         />
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Controller
           name="title"
           control={control}
           render={({ field }) => (
-            <TextField
-              label="Title"
-              margin="normal"
-              size="small"
-              {...field}
-            />
+            <TextField label="Title" margin="normal" size="small" {...field} />
           )}
         />
         <Controller
@@ -112,10 +101,12 @@ function Form({
 }
 
 Form.propTypes = {
-  categoriesPaths: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    names: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  }).isRequired).isRequired,
+  categoriesPaths: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      names: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    }).isRequired
+  ).isRequired,
   notePrefilledData: PropTypes.shape({
     categoryKey: PropTypes.string,
     content: PropTypes.string,
@@ -129,11 +120,11 @@ Form.propTypes = {
 
 Form.defaultProps = {
   notePrefilledData: {
-    categoryKey: '',
-    content: '',
-    key: '',
+    categoryKey: "",
+    content: "",
+    key: "",
     rank: 0,
-    title: '',
+    title: "",
   },
 };
 
