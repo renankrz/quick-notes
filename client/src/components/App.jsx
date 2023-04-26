@@ -116,7 +116,7 @@ function App() {
   };
 
   return (
-    <Container maxWidth='xl'>
+    <Container maxWidth="xl">
       <Header />
       <Box sx={{ display: "flex" }}>
         <Box sx={{ width: "300px", height: "80vh", overflow: "auto" }}>
@@ -139,7 +139,7 @@ function App() {
             minWidth: "100px",
           }}
         >
-          <Divider orientation='vertical' />
+          <Divider orientation="vertical" />
         </Box>
         <Box sx={{ width: "66.7%", margin: "0 auto" }}>
           <Box sx={{ mb: 1, display: "flex" }}>
@@ -155,11 +155,13 @@ function App() {
           </Box>
           {interactionMode === "view" &&
             queryAll.fetchStatus === "idle" &&
-            queryRandom.fetchStatus === "idle" && (
+            queryRandom.fetchStatus === "idle" &&
+            queryCategories.fetchStatus === "idle" && (
               <Notes
                 notes={
                   notesViewMode === "all" ? queryAll.data : queryRandom.data
                 }
+                categoriesPaths={categoriesPaths.current}
                 deleteNote={handleDeleteClick}
                 editNote={handleEditClick}
               />
@@ -168,7 +170,7 @@ function App() {
             <Form
               categoriesPaths={categoriesPaths.current}
               submit={handleCreateNoteClick}
-              submitButtonText='create'
+              submitButtonText="create"
             />
           )}
           {interactionMode === "edit" && (
@@ -176,7 +178,7 @@ function App() {
               categoriesPaths={categoriesPaths.current}
               notePrefilledData={noteToEdit}
               submit={handleEditNoteClick}
-              submitButtonText='save'
+              submitButtonText="save"
             />
           )}
         </Box>

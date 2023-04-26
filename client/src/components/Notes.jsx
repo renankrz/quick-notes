@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Content from "./Content";
 
-function Notes({ notes, deleteNote, editNote }) {
+function Notes({ notes, categoriesPaths, deleteNote, editNote }) {
   return (
     <Container sx={{ maxHeight: "75vh", overflow: "auto" }}>
       {notes.map((note) => (
@@ -23,9 +23,25 @@ function Notes({ notes, deleteNote, editNote }) {
               sx={{
                 background: "#F2F2F2",
                 padding: 2,
-                paddingBottom: 2,
               }}
             >
+              {categoriesPaths
+                .filter((c) => c.key === note.categoryKey)
+                .map((cat) => (
+                  <Typography
+                    key={cat.key}
+                    variant="body1"
+                    sx={{ color: "#353C65", paddingBottom: 1 }}
+                  >
+                    {cat.names
+                      .reduce(
+                        (previousValue, currentValue) =>
+                          `${previousValue} > ${currentValue}`,
+                        ""
+                      )
+                      .slice(3)}
+                  </Typography>
+                ))}
               <Typography variant="h5" sx={{ color: "#6977C9" }}>
                 {note.title}
               </Typography>
@@ -71,6 +87,12 @@ Notes.propTypes = {
       key: PropTypes.string.isRequired,
       rank: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  categoriesPaths: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      names: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     }).isRequired
   ).isRequired,
   deleteNote: PropTypes.func.isRequired,
