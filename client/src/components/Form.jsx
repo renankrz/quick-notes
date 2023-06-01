@@ -42,17 +42,33 @@ function Form({
               size="small"
               {...field}
             >
-              {categoriesPaths.map((c) => (
-                <MenuItem key={c.key} value={c.key}>
-                  {c.names
+              {categoriesPaths
+                .map((c) => ({
+                  key: c.key,
+                  name: c.names
                     .reduce(
                       (previousValue, currentValue) =>
                         `${previousValue} > ${currentValue}`,
                       ""
                     )
-                    .slice(3)}
-                </MenuItem>
-              ))}
+                    .slice(3),
+                }))
+                .sort((a, b) => {
+                  const nameA = a.name.toUpperCase();
+                  const nameB = b.name.toUpperCase();
+                  if (nameA < nameB) {
+                    return -1;
+                  }
+                  if (nameA > nameB) {
+                    return 1;
+                  }
+                  return 0;
+                })
+                .map((c) => (
+                  <MenuItem key={c.key} value={c.key}>
+                    {c.name}
+                  </MenuItem>
+                ))}
             </TextField>
           )}
         />
