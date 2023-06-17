@@ -38,12 +38,12 @@
   font-size: 16px;
 }
 
-.content ol {
-  margin-left: 21px;
+.content ol li {
+  margin-bottom: 4px;
 }
 
-.content ul {
-  margin-left: 16px;
+.content ul li {
+  margin-bottom: 4px;
 }
 
 .content h1 code,
