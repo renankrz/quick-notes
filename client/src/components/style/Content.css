@@ -6,6 +6,11 @@
   color: #444;
 }
 
+.content ol ol,
+.content ul ul {
+  margin-bottom: 0;
+}
+
 .content h1,
 .content h2,
 .content h3,
@@ -38,12 +43,12 @@
   font-size: 16px;
 }
 
-.content ol li {
-  margin-bottom: 4px;
+.content p {
+  line-height: 1.4;
 }
 
-.content ul li {
-  margin-bottom: 4px;
+.content li {
+  line-height: 1.6;
 }
 
 .content h1 code,
