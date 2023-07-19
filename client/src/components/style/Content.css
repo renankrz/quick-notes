@@ -15,7 +15,7 @@
 .content p,
 .content ol,
 .content ul,
-.content-code
+.code
 {
   margin-bottom: 10px;
 }
@@ -65,10 +65,19 @@
   margin-right: auto;
 }
 
-.content-code {
+.code {
   border-radius: 5px;
   overflow: hidden;
   line-height: 20px;
+}
+
+.content .small-code {
+  width: 50%;
+  padding: 16px;
+  margin: 16px 0;
+  background-color: #F8F8F8;
+  border: 1px solid #EEE;
+  border-radius: 4px;
 }
 
 /*

@@ -15,7 +15,7 @@ const components = {
     props.children[0] = props.children[0].replace(/\n$/, "");
     const match = /language-(\w+)/.exec(className || "");
     return match ? (
-      <div className="content-code">
+      <div className="code">
         <SyntaxHighlighter
           language={match[1]}
           style={googlecode}
