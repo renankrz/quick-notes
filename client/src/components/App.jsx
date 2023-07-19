@@ -116,7 +116,7 @@ function App() {
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container sx={{ minWidth: "95vw" }}>
       <Header />
       <Box sx={{ display: "flex" }}>
         <Box sx={{ width: "300px", height: "80vh", overflow: "auto" }}>
