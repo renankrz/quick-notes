@@ -84,6 +84,17 @@
   border-radius: 4px;
 }
 
+.content blockquote {
+  background: #F8F8F8;
+  border-left: 10px solid #CCC;
+  margin: 1.5em 0;
+  padding: 0.5em 10px;
+}
+
+.content blockquote p {
+  display: inline;
+}
+
 /*
  * Overwrite styles defined by react-syntax-highlighter
  */
