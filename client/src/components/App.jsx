@@ -169,6 +169,14 @@ function App() {
           {interactionMode === "create" && (
             <Form
               categoriesPaths={categoriesPaths.current}
+              notePrefilledData={{
+                categoryKey:
+                  selectedCategories.length === 1 ? selectedCategories[0] : "",
+                content: "",
+                key: "",
+                rank: 0,
+                title: "",
+              }}
               submit={handleCreateNoteClick}
               submitButtonText="create"
             />
