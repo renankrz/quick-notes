@@ -20,8 +20,14 @@ function Categories({
       {node.children.length > 0
         ? node.children
             .sort((a, b) => {
-              const nameA = a.name.toUpperCase();
-              const nameB = b.name.toUpperCase();
+              const nameA = a.name
+                .toUpperCase()
+                .normalize("NFD")
+                .replace(/\p{Diacritic}/gu, "");
+              const nameB = b.name
+                .toUpperCase()
+                .normalize("NFD")
+                .replace(/\p{Diacritic}/gu, "");
               if (nameA < nameB) {
                 return -1;
               }
