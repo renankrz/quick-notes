@@ -162,6 +162,35 @@ router.get('/rich', async (_, res, next) => {
   }
 });
 
+const readRoot = async (db) => withErrorHandling(async () => {
+  const cursor = await db.query({
+    query: `
+      LET rootArray = (
+        FOR c IN @@collection
+        FILTER c.name == 'root'
+        LIMIT 1
+          RETURN c
+      )
+      RETURN rootArray[0]
+    `,
+    bindVars: {
+      '@collection': COLL_CATEGORIES,
+    },
+  });
+  const result = await cursor.all();
+  return result[0];
+});
+
+router.get('/root', async (_, res, next) => {
+  try {
+    const db = connection.database(process.env.DB_NAME);
+    const root = await readRoot(db);
+    res.json(root);
+  } catch (error) {
+    next(error);
+  }
+});
+
 const deleteCategory = async (db, key) => withErrorHandling(async () => {
   const categoriesColl = db.collection(COLL_CATEGORIES);
   const dbCategory = await categoriesColl.remove(key, {

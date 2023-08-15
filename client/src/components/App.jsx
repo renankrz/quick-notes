@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, Button, Container, Divider } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { readCategoriesRich } from "../api/categories";
+import { readCategoriesRich, readRoot } from "../api/categories";
 import {
   createNote,
   deleteNote,
@@ -25,6 +25,12 @@ function App() {
   const categoriesPaths = React.useRef([]);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
+
+  const queryRoot = useQuery(["queryRoot"], readRoot, {
+    onSuccess: (data) => {
+      setSelectedCategories([data._key]);
+    },
+  });
 
   const queryCategories = useQuery(["categories"], readCategoriesRich, {
     onSuccess: (data) => {

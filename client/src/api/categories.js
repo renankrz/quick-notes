@@ -9,3 +9,8 @@ export async function readCategoriesRich() {
   const response = await fetch(`${API_URL}/rich`);
   return response.json();
 }
+
+export async function readRoot() {
+  const response = await fetch(`${API_URL}/root`);
+  return response.json();
+}
