@@ -1,7 +1,6 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import { Controller, useForm } from "react-hook-form";
-import { Box, Button, MenuItem, TextField } from "@mui/material";
+import { Box, Button, MenuItem, TextField } from '@mui/material';
+import PropTypes from 'prop-types';
+import { Controller, useForm } from 'react-hook-form';
 
 function Form({
   categoriesPaths,
@@ -15,7 +14,7 @@ function Form({
 
   const handleSubmitClick = (data) => {
     try {
-      if (notePrefilledData.key === "") {
+      if (notePrefilledData.key === '') {
         // Creating
         submit(data);
       } else {
@@ -45,23 +44,17 @@ function Form({
               {categoriesPaths
                 .map((c) => ({
                   key: c.key,
-                  name: c.names
-                    .reduce(
-                      (previousValue, currentValue) =>
-                        `${previousValue} > ${currentValue}`,
-                      ""
-                    )
-                    .slice(3),
+                  vertices: c.vertices,
                 }))
                 .sort((a, b) => {
-                  const nameA = a.name
+                  const nameA = a.vertices
                     .toUpperCase()
-                    .normalize("NFD")
-                    .replace(/\p{Diacritic}/gu, "");
-                  const nameB = b.name
+                    .normalize('NFD')
+                    .replace(/\p{Diacritic}/gu, '');
+                  const nameB = b.vertices
                     .toUpperCase()
-                    .normalize("NFD")
-                    .replace(/\p{Diacritic}/gu, "");
+                    .normalize('NFD')
+                    .replace(/\p{Diacritic}/gu, '');
                   if (nameA < nameB) {
                     return -1;
                   }
@@ -72,7 +65,7 @@ function Form({
                 })
                 .map((c) => (
                   <MenuItem key={c.key} value={c.key}>
-                    {c.name}
+                    {c.vertices}
                   </MenuItem>
                 ))}
             </TextField>
@@ -86,7 +79,7 @@ function Form({
           )}
         />
       </Box>
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Controller
           name="title"
           control={control}
@@ -126,7 +119,7 @@ Form.propTypes = {
   categoriesPaths: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
-      names: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+      vertices: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
   notePrefilledData: PropTypes.shape({
@@ -142,11 +135,11 @@ Form.propTypes = {
 
 Form.defaultProps = {
   notePrefilledData: {
-    categoryKey: "",
-    content: "",
-    key: "",
+    categoryKey: '',
+    content: '',
+    key: '',
     rank: 0,
-    title: "",
+    title: '',
   },
 };
 

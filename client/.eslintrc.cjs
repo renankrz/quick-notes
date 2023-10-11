@@ -1,56 +1,22 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-  },
+  root: true,
+  env: { browser: true, es2020: true },
   extends: [
+    'eslint:recommended',
     'plugin:react/recommended',
-    'airbnb',
+    'plugin:react/jsx-runtime',
+    'plugin:react-hooks/recommended',
   ],
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
-  plugins: [
-    'react',
-  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+  settings: { react: { version: '18.2' } },
+  plugins: ['react-refresh', 'simple-import-sort'],
   rules: {
-    'react/forbid-prop-types': ['error', {
-      forbid: ['any', 'array'],
-      checkContextTypes: true,
-      checkChildContextTypes: true,
-    }],
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
   },
-  overrides: [
-    {
-      files: ['Content.jsx'],
-      rules: {
-        'react/jsx-props-no-spreading': 'off',
-        'no-param-reassign': 'off',
-        'react/prop-types': 'off',
-      },
-    },
-    {
-      files: ['Form.jsx'],
-      rules: {
-        'react/jsx-props-no-spreading': 'off',
-      },
-    },
-    {
-      files: ['Notes.jsx'],
-      rules: {
-        'jsx-a11y/click-events-have-key-events': 'off',
-        'jsx-a11y/no-noninteractive-element-to-interactive-role': 'off',
-      },
-    },
-    {
-      files: ['StyledTreeItem.jsx'],
-      rules: {
-        'react/jsx-props-no-spreading': 'off',
-      },
-    },
-  ],
 };

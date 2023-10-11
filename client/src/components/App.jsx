@@ -1,58 +1,90 @@
-import * as React from "react";
-import { Box, Button, Container, Divider } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { readCategoriesRich, readRoot } from "../api/categories";
+import './style/App.css';
+
+import { Box, Button, Container, Divider } from '@mui/material';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React from 'react';
+
 import {
-  createNote,
-  deleteNote,
-  readAllNotes,
-  readRandomNote,
-  updateNote,
-} from "../api/notes";
-import Categories from "./Categories";
-import Form from "./Form";
-import Header from "./Header";
-import Notes from "./Notes";
+  getCategoriesTree,
+  getExpandableCategories,
+  getFlattenedCategoriesPaths,
+  getSelectableCategories,
+} from '../api/categories-tree';
+import { createNote, deleteNote, getAllNotes, updateNote } from '../api/notes';
+import CategoriesTree from './CategoriesTree';
+import Form from './Form';
+import Header from './Header';
+import Notes from './Notes';
 
-import "./style/App.css";
-
-function App() {
-  const [interactionMode, setInteractionMode] = React.useState("view");
-  const [notesViewMode, setNotesViewMode] = React.useState("random");
-  const [noteToEdit, setNoteToEdit] = React.useState(null);
+const App = () => {
+  const [interactionMode, setInteractionMode] = React.useState('view');
+  const [notesViewMode, setNotesViewMode] = React.useState('random');
   const [expandedCategories, setExpandedCategories] = React.useState([]);
   const [selectedCategories, setSelectedCategories] = React.useState([]);
-  const categoriesPaths = React.useRef([]);
+  const [rand, setRand] = React.useState(Math.random());
+  const noteToUpdate = React.useRef(null);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
 
-  const queryRoot = useQuery(["queryRoot"], readRoot, {
-    onSuccess: (data) => {
-      setSelectedCategories([data._key]);
+  const queryClient = useQueryClient();
+
+  const queryCategoriesTree = useQuery(['categories-tree'], getCategoriesTree);
+
+  const queryExpandableCategories = useQuery(
+    ['expandable-categories'],
+    getExpandableCategories,
+    {
+      onSuccess: (data) => {
+        expandableNodes.current = data.map((c) => c.key);
+      },
+    }
+  );
+
+  const querySelectableCategories = useQuery(
+    ['selectable-categories'],
+    getSelectableCategories,
+    {
+      onSuccess: (data) => {
+        selectableNodes.current = data.map((c) => c.key);
+      },
+    }
+  );
+
+  const queryFlattenedCategoriesPaths = useQuery(
+    ['flattened-categories-paths'],
+    getFlattenedCategoriesPaths
+  );
+
+  const queryNotes = useQuery(['notes', selectedCategories], () =>
+    getAllNotes(selectedCategories)
+  );
+
+  const mutationCreateNote = useMutation(createNote, {
+    onSuccess: () => {
+      setInteractionMode('view');
+      queryClient.invalidateQueries('notes');
     },
   });
 
-  const queryCategories = useQuery(["categories"], readCategoriesRich, {
-    onSuccess: (data) => {
-      // All categories with key and name
-      categoriesPaths.current = data.paths;
-      // Keys of nodes that have children
-      expandableNodes.current = [...new Set(data.edges.map((e) => e.from))];
-      // Keys of all nodes
-      selectableNodes.current = data.vertices.map((v) => v.key);
+  const mutationUpdateNote = useMutation(updateNote, {
+    onSuccess: () => {
+      setInteractionMode('view');
+      queryClient.invalidateQueries('notes');
     },
   });
 
-  const queryRandom = useQuery(["queryRandom", selectedCategories], () =>
-    readRandomNote(selectedCategories)
-  );
-
-  const queryAll = useQuery(["queryAll", selectedCategories], () =>
-    readAllNotes(selectedCategories)
-  );
+  const mutationDeleteNote = useMutation(deleteNote, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('notes');
+    },
+  });
 
   const handleExpand = (event, nodeIds) => {
     setExpandedCategories(nodeIds);
+  };
+
+  const handleSelect = (event, nodeIds) => {
+    setSelectedCategories(nodeIds);
   };
 
   const handleExpandAllClick = () => {
@@ -61,137 +93,132 @@ function App() {
     );
   };
 
-  const handleSelect = (event, nodeIds) => {
-    setSelectedCategories(nodeIds);
-  };
-
   const handleSelectAllClick = () => {
     setSelectedCategories((old) =>
       old.length === 0 ? selectableNodes.current : []
     );
   };
 
-  const handleToggleModeClick = () => {
-    setInteractionMode(interactionMode === "view" ? "create" : "view");
+  const handleGetAllClick = () => {
+    setNotesViewMode('all');
   };
 
-  const handleAllClick = () => {
-    setNotesViewMode("all");
+  const handleGetRandomClick = async () => {
+    setRand(Math.random());
+    setNotesViewMode('random');
   };
 
-  const handleRandomClick = async () => {
-    if (notesViewMode === "random") {
-      await queryRandom.refetch();
-    } else {
-      setNotesViewMode("random");
+  const handleToggleInteractionModeClick = () => {
+    setInteractionMode(interactionMode === 'view' ? 'create' : 'view');
+  };
+
+  const handleDeleteNoteIconClick = async (key) => {
+    mutationDeleteNote.mutate(key);
+  };
+
+  const handleUpdateNoteIconClick = async (data) => {
+    setInteractionMode('update');
+    noteToUpdate.current = data;
+  };
+
+  const handleCreateNoteSubmit = async (data) => {
+    mutationCreateNote.mutate(data);
+  };
+
+  const handleUpdateNoteSubmit = async (key, data) => {
+    mutationUpdateNote.mutate({ key, data });
+  };
+
+  const chooseRandomNote = () => {
+    if (queryNotes.data.length === 0) {
+      return [];
     }
-  };
-
-  const handleCreateNoteClick = async (data) => {
-    await createNote(data);
-    setInteractionMode("view");
-    if (notesViewMode === "all") {
-      await queryAll.refetch();
-    } else {
-      await queryRandom.refetch();
-    }
-  };
-
-  const handleEditNoteClick = async (key, data) => {
-    await updateNote(key, data);
-    setInteractionMode("view");
-    if (notesViewMode === "all") {
-      await queryAll.refetch();
-    } else {
-      await queryRandom.refetch();
-    }
-  };
-
-  const handleDeleteClick = async (key) => {
-    await deleteNote(key);
-    if (notesViewMode === "all") {
-      await queryAll.refetch();
-    } else {
-      await queryRandom.refetch();
-    }
-  };
-
-  const handleEditClick = async (note) => {
-    setNoteToEdit(note);
-    setInteractionMode("edit");
+    return [queryNotes.data[Math.floor(rand * queryNotes.data.length)]];
   };
 
   return (
-    <Container sx={{ minWidth: "95vw" }}>
+    <Container sx={{ minWidth: '95vw' }}>
       <Header />
-      <Box sx={{ display: "flex" }}>
-        <Box sx={{ width: "300px", height: "80vh", overflow: "auto" }}>
-          {queryCategories.isSuccess && (
-            <Categories
-              categories={queryCategories.data.categories}
-              expanded={expandedCategories}
-              handleExpand={handleExpand}
-              handleExpandAllClick={handleExpandAllClick}
-              selected={selectedCategories}
-              handleSelect={handleSelect}
-              handleSelectAllClick={handleSelectAllClick}
-            />
-          )}
+      <Box
+        sx={{
+          display: 'flex',
+        }}
+      >
+        <Box
+          sx={{
+            width: 300,
+          }}
+        >
+          {queryExpandableCategories.isSuccess &&
+            querySelectableCategories.isSuccess &&
+            queryCategoriesTree.isSuccess && (
+              <CategoriesTree
+                categories={queryCategoriesTree.data}
+                expanded={expandedCategories}
+                handleExpand={handleExpand}
+                handleExpandAllClick={handleExpandAllClick}
+                selected={selectedCategories}
+                handleSelect={handleSelect}
+                handleSelectAllClick={handleSelectAllClick}
+              />
+            )}
         </Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            minWidth: "100px",
+            display: 'flex',
+            justifyContent: 'space-around',
+            minWidth: '100px',
           }}
         >
           <Divider orientation="vertical" />
         </Box>
-        <Box sx={{ width: "66.7%", margin: "0 auto" }}>
-          <Box sx={{ mb: 1, display: "flex" }}>
-            <Button onClick={handleAllClick} sx={{ width: "120px" }}>
+        <Box sx={{ width: '66.7%', margin: '0 auto' }}>
+          <Box sx={{ mb: 1, display: 'flex' }}>
+            <Button onClick={handleGetAllClick} sx={{ width: '120px' }}>
               get all
             </Button>
-            <Button onClick={handleRandomClick} sx={{ width: "120px" }}>
+            <Button onClick={handleGetRandomClick} sx={{ width: '120px' }}>
               get random
             </Button>
-            <Button onClick={handleToggleModeClick} sx={{ width: "120px" }}>
-              {interactionMode === "view" ? "create new" : "view notes"}
+            <Button
+              onClick={handleToggleInteractionModeClick}
+              sx={{ width: '120px' }}
+            >
+              {interactionMode === 'view' ? 'create new' : 'view notes'}
             </Button>
           </Box>
-          {interactionMode === "view" &&
-            queryAll.fetchStatus === "idle" &&
-            queryRandom.fetchStatus === "idle" &&
-            queryCategories.fetchStatus === "idle" && (
+          {interactionMode === 'view' &&
+            queryNotes.fetchStatus === 'idle' &&
+            queryFlattenedCategoriesPaths.isSuccess && (
               <Notes
                 notes={
-                  notesViewMode === "all" ? queryAll.data : queryRandom.data
+                  notesViewMode === 'all' ? queryNotes.data : chooseRandomNote()
                 }
-                categoriesPaths={categoriesPaths.current}
-                deleteNote={handleDeleteClick}
-                editNote={handleEditClick}
+                categoriesPaths={queryFlattenedCategoriesPaths.data}
+                updateNote={handleUpdateNoteIconClick}
+                deleteNote={handleDeleteNoteIconClick}
               />
             )}
-          {interactionMode === "create" && (
+          {interactionMode === 'create' && (
             <Form
-              categoriesPaths={categoriesPaths.current}
+              categoriesPaths={queryFlattenedCategoriesPaths.data}
               notePrefilledData={{
                 categoryKey:
-                  selectedCategories.length === 1 ? selectedCategories[0] : "",
-                content: "",
-                key: "",
+                  selectedCategories.length === 1 ? selectedCategories[0] : '',
+                content: '',
+                key: '',
                 rank: 0,
-                title: "",
+                title: '',
               }}
-              submit={handleCreateNoteClick}
+              submit={handleCreateNoteSubmit}
               submitButtonText="create"
             />
           )}
-          {interactionMode === "edit" && (
+          {interactionMode === 'update' && (
             <Form
-              categoriesPaths={categoriesPaths.current}
-              notePrefilledData={noteToEdit}
-              submit={handleEditNoteClick}
+              categoriesPaths={queryFlattenedCategoriesPaths.data}
+              notePrefilledData={noteToUpdate.current}
+              submit={handleUpdateNoteSubmit}
               submitButtonText="save"
             />
           )}
@@ -199,6 +226,6 @@ function App() {
       </Box>
     </Container>
   );
-}
+};
 
 export default App;

@@ -1,0 +1,19 @@
+{
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
+  "overrides": [
+    {
+      "files": ["src/db/categories-tree-db.js"],
+      "parserOptions": {
+        "ecmaVersion": 2020
+      },
+      "rules": {
+        "no-console": ["off"],
+        "no-restricted-syntax": ["off"],
+        "no-underscore-dangle": ["off"],
+        "simple-import-sort/imports": ["error"],
+        "simple-import-sort/exports": ["error"]
+      }
+    }
+  ],
+  "plugins": ["simple-import-sort"]
+}
