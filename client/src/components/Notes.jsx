@@ -2,18 +2,37 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Container,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   IconButton,
   Tooltip,
   Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import Content from './Content';
 
 function Notes({ notes, categoriesPaths, updateNote, deleteNote }) {
+  const [dialogueIsOpen, setDialogueIsOpen] = React.useState(false);
+
+  const handleClickDelete = () => {
+    setDialogueIsOpen(true);
+  };
+
+  const handleCloseDialogue = () => {
+    setDialogueIsOpen(false);
+  };
+
+  const handleConfirmDelete = (note) => {
+    deleteNote(note.key);
+  };
+
   return (
     <Container sx={{ maxHeight: '75vh', overflow: 'auto' }}>
       {notes.map((note) => (
@@ -61,10 +80,21 @@ function Notes({ notes, categoriesPaths, updateNote, deleteNote }) {
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete">
-                <IconButton onClick={() => deleteNote(note.key)}>
+                <IconButton onClick={handleClickDelete}>
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
+              <Dialog open={dialogueIsOpen} onClose={handleCloseDialogue}>
+                <DialogTitle id="alert-dialog-title">
+                  {'Really delete?'}
+                </DialogTitle>
+                <DialogActions sx={{ margin: 'auto' }}>
+                  <Button onClick={handleCloseDialogue}>Cancel</Button>
+                  <Button onClick={() => handleConfirmDelete(note)} autoFocus>
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Box>
           </Card>
         </Box>
