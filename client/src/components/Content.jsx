@@ -10,7 +10,7 @@ import rehypeRaw from 'rehype-raw';
 import remarkMath from 'remark-math';
 
 const components = {
-  code({ node, className, ...props }) {
+  code({ className, ...props }) {
     props.children[0] = props.children[0].replace(/\n$/, '');
     const match = /language-(\w+)/.exec(className || '');
     if (typeof props.inline === 'boolean') {
