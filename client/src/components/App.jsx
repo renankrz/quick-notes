@@ -199,21 +199,29 @@ const App = () => {
                 deleteNote={handleDeleteNoteIconClick}
               />
             )}
-          {interactionMode === 'create' && (
-            <Form
-              categoriesPaths={queryFlattenedCategoriesPaths.data}
-              notePrefilledData={{
-                categoryKey:
-                  selectedCategories.length === 1 ? selectedCategories[0] : '',
-                content: '',
-                key: '',
-                rank: 0,
-                title: '',
-              }}
-              submit={handleCreateNoteSubmit}
-              submitButtonText="create"
-            />
-          )}
+          {interactionMode === 'create' &&
+            queryNotes.fetchStatus === 'idle' && (
+              <Form
+                categoriesPaths={queryFlattenedCategoriesPaths.data}
+                notePrefilledData={{
+                  categoryKey:
+                    selectedCategories.length === 1
+                      ? selectedCategories[0]
+                      : '',
+                  content: '',
+                  key: '',
+                  rank:
+                    selectedCategories.length === 1 &&
+                    queryNotes.data.length > 0
+                      ? Math.max(...queryNotes.data.map((note) => note.rank)) +
+                        1
+                      : 1,
+                  title: '',
+                }}
+                submit={handleCreateNoteSubmit}
+                submitButtonText="create"
+              />
+            )}
           {interactionMode === 'update' && (
             <Form
               categoriesPaths={queryFlattenedCategoriesPaths.data}
