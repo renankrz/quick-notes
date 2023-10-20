@@ -44,17 +44,29 @@ function Notes({ notes, categoriesPaths, updateNote, deleteNote }) {
                 padding: 2,
               }}
             >
-              {categoriesPaths
-                .filter((c) => c.key === note.categoryKey)
-                .map((categoryPath) => (
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  {categoriesPaths
+                    .filter((c) => c.key === note.categoryKey)
+                    .map((categoryPath) => (
+                      <Typography
+                        key={categoryPath.key}
+                        variant="body1"
+                        sx={{ color: '#353C65', paddingBottom: 1 }}
+                      >
+                        {categoryPath.vertices}
+                      </Typography>
+                    ))}
+                </Box>
+                <Box>
                   <Typography
-                    key={categoryPath.key}
                     variant="body1"
                     sx={{ color: '#353C65', paddingBottom: 1 }}
                   >
-                    {categoryPath.vertices}
+                    {note.rank}
                   </Typography>
-                ))}
+                </Box>
+              </Box>
               <Typography variant="h5" sx={{ color: '#6977C9' }}>
                 {note.title}
               </Typography>
