@@ -1,3 +1,3 @@
 arangorestore \
-  --server.database "QuickNotesDB" \
+  --server.database "quickNotesDB" \
   --input-directory "dump"
