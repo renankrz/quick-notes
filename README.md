@@ -55,12 +55,12 @@ Prerequisites:
 - yarn
 
 1. in ArangoDB, create:
-   1.1) a new database
+   1.1) a new database named "quickNotesDB"
    1.2) a collection named "categories"
    1.3) a collection named "notes"
    1.4) an edge collection named "hasSubcategory"
-   1.5) a graph from "categories" to "categories" with edges "hasSubcategory"
-2. write your own `.env` files based on the examples given [here][1] and [here][2].
+   1.5) a graph named "categoriesGraph" from "categories" to "categories" with edges "hasSubcategory"
+2. write your own `.env` files for both server and client based on the examples given [here][1] and [here][2].
 
 ### Start the server:
 
