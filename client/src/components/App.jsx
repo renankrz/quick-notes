@@ -45,10 +45,10 @@ const App = () => {
   const [notesViewMode, setNotesViewMode] = React.useState('random');
   const [expandedCategories, setExpandedCategories] = React.useState([]);
   const [selectedCategories, setSelectedCategories] = React.useState([]);
-  const [rand, setRand] = React.useState(Math.random());
+  const [rand, setRand] = React.useState(() => Math.random());
   const [dialog, setDialog] = React.useState(null);
   const [snackbar, setSnackbar] = React.useState(null);
-  const noteToUpdate = React.useRef(null);
+  const [noteToUpdate, setNoteToUpdate] = React.useState(null);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
 
@@ -66,58 +66,70 @@ const App = () => {
 
   const closeDialog = () => setDialog(null);
 
-  const queryCategoriesTree = useQuery(['categories-tree'], getCategoriesTree);
+  const queryCategoriesTree = useQuery({
+    queryKey: ['categories-tree'],
+    queryFn: getCategoriesTree,
+  });
 
-  const queryExpandableCategories = useQuery(
-    ['expandable-categories'],
-    getExpandableCategories,
-    {
-      onSuccess: (data) => {
-        expandableNodes.current = data.map((c) => c.key);
-      },
+  const queryExpandableCategories = useQuery({
+    queryKey: ['expandable-categories'],
+    queryFn: getExpandableCategories,
+  });
+
+  const querySelectableCategories = useQuery({
+    queryKey: ['selectable-categories'],
+    queryFn: getSelectableCategories,
+  });
+
+  // React Query v5 removed `onSuccess` from useQuery; derive the ref lists from
+  // the query data instead.
+  React.useEffect(() => {
+    if (queryExpandableCategories.data) {
+      expandableNodes.current = queryExpandableCategories.data.map((c) => c.key);
     }
-  );
+  }, [queryExpandableCategories.data]);
 
-  const querySelectableCategories = useQuery(
-    ['selectable-categories'],
-    getSelectableCategories,
-    {
-      onSuccess: (data) => {
-        selectableNodes.current = data.map((c) => c.key);
-      },
+  React.useEffect(() => {
+    if (querySelectableCategories.data) {
+      selectableNodes.current = querySelectableCategories.data.map((c) => c.key);
     }
-  );
+  }, [querySelectableCategories.data]);
 
-  const queryFlattenedCategoriesPaths = useQuery(
-    ['flattened-categories-paths'],
-    getFlattenedCategoriesPaths
-  );
+  const queryFlattenedCategoriesPaths = useQuery({
+    queryKey: ['flattened-categories-paths'],
+    queryFn: getFlattenedCategoriesPaths,
+  });
 
-  const queryNotes = useQuery(['notes', selectedCategories], () =>
-    getAllNotes(selectedCategories)
-  );
+  const queryNotes = useQuery({
+    queryKey: ['notes', selectedCategories],
+    queryFn: () => getAllNotes(selectedCategories),
+  });
 
-  const mutationCreateNote = useMutation(createNote, {
+  const mutationCreateNote = useMutation({
+    mutationFn: createNote,
     onSuccess: () => {
       setInteractionMode('view');
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 
-  const mutationUpdateNote = useMutation(updateNote, {
+  const mutationUpdateNote = useMutation({
+    mutationFn: updateNote,
     onSuccess: () => {
       setInteractionMode('view');
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 
-  const mutationDeleteNote = useMutation(deleteNote, {
+  const mutationDeleteNote = useMutation({
+    mutationFn: deleteNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 
-  const makeCategoryMutationOptions = (successMsg) => ({
+  const makeCategoryMutationOptions = (mutationFn, successMsg) => ({
+    mutationFn,
     onSuccess: () => {
       invalidateCategories();
       if (successMsg) {
@@ -128,23 +140,20 @@ const App = () => {
   });
 
   const mutationCreateCategory = useMutation(
-    createCategory,
-    makeCategoryMutationOptions('Category created')
+    makeCategoryMutationOptions(createCategory, 'Category created')
   );
   const mutationRenameCategory = useMutation(
-    renameCategory,
-    makeCategoryMutationOptions('Category renamed')
+    makeCategoryMutationOptions(renameCategory, 'Category renamed')
   );
   const mutationMoveCategory = useMutation(
-    moveCategory,
-    makeCategoryMutationOptions('Category moved')
+    makeCategoryMutationOptions(moveCategory, 'Category moved')
   );
   const mutationDeleteCategory = useMutation(
-    deleteCategory,
-    makeCategoryMutationOptions('Category deleted')
+    makeCategoryMutationOptions(deleteCategory, 'Category deleted')
   );
 
-  const mutationMoveNote = useMutation(moveNote, {
+  const mutationMoveNote = useMutation({
+    mutationFn: moveNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       notify('Note moved', 'success');
@@ -152,7 +161,8 @@ const App = () => {
     onError: (err) => notify(err.message),
   });
 
-  const mutationMoveAllNotes = useMutation(moveAllNotes, {
+  const mutationMoveAllNotes = useMutation({
+    mutationFn: moveAllNotes,
     onSuccess: (moved) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       notify(`Moved ${moved} note(s)`, 'success');
@@ -160,7 +170,8 @@ const App = () => {
     onError: (err) => notify(err.message),
   });
 
-  const mutationDeleteAllNotes = useMutation(deleteAllNotes, {
+  const mutationDeleteAllNotes = useMutation({
+    mutationFn: deleteAllNotes,
     onSuccess: (deleted) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       notify(`Deleted ${deleted} note(s)`, 'success');
@@ -207,7 +218,7 @@ const App = () => {
 
   const handleUpdateNoteIconClick = async (data) => {
     setInteractionMode('update');
-    noteToUpdate.current = data;
+    setNoteToUpdate(data);
   };
 
   const handleCreateNoteSubmit = async (data) => {
@@ -340,7 +351,7 @@ const App = () => {
           {interactionMode === 'update' && (
             <Form
               categoriesPaths={queryFlattenedCategoriesPaths.data}
-              notePrefilledData={noteToUpdate.current}
+              notePrefilledData={noteToUpdate}
               submit={handleUpdateNoteSubmit}
               submitButtonText="save"
             />

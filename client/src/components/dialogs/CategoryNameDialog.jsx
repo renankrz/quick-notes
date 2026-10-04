@@ -14,12 +14,16 @@ import React from 'react';
  */
 function CategoryNameDialog({ open, title, initialName, onSubmit, onClose }) {
   const [name, setName] = React.useState(initialName);
+  const [wasOpen, setWasOpen] = React.useState(open);
 
-  React.useEffect(() => {
+  // Reset the field each time the dialog opens (adjust state during render,
+  // the React-recommended alternative to setState inside an effect).
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
       setName(initialName);
     }
-  }, [open, initialName]);
+  }
 
   const trimmed = name.trim();
 

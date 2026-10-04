@@ -10,37 +10,41 @@ import rehypeRaw from 'rehype-raw';
 import remarkMath from 'remark-math';
 
 const components = {
-  code({ className, ...props }) {
-    props.children[0] = props.children[0].replace(/\n$/, '');
+  // `node` is destructured only to keep it out of the props spread.
+  // eslint-disable-next-line no-unused-vars
+  code({ className, children, node, ...props }) {
     const match = /language-(\w+)/.exec(className || '');
-    if (typeof props.inline === 'boolean') {
-      props.inline = props.inline.toString();
-    }
+    const text = String(children).replace(/\n$/, '');
     return match ? (
       <div className="code">
         <SyntaxHighlighter
           language={match[1]}
           style={googlecode}
-          showLineNumbers="true"
+          showLineNumbers
           {...props}
-        />
+        >
+          {text}
+        </SyntaxHighlighter>
       </div>
     ) : (
-      <code className={className} {...props} />
+      <code className={className} {...props}>
+        {children}
+      </code>
     );
   },
 };
 
 function Content({ content }) {
   return (
-    <ReactMarkdown
-      className="content"
-      components={components}
-      remarkPlugins={[remarkMath]}
-      rehypePlugins={[[rehypeKatex, { trust: true }], [rehypeRaw]]}
-    >
-      {content}
-    </ReactMarkdown>
+    <div className="content">
+      <ReactMarkdown
+        components={components}
+        remarkPlugins={[remarkMath]}
+        rehypePlugins={[[rehypeKatex, { trust: true }], [rehypeRaw]]}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 }
 

@@ -27,12 +27,16 @@ function CategoryPickerDialog({
   onClose,
 }) {
   const [value, setValue] = React.useState(null);
+  const [wasOpen, setWasOpen] = React.useState(open);
 
-  React.useEffect(() => {
+  // Reset the selection each time the dialog opens (adjust state during render,
+  // the React-recommended alternative to setState inside an effect).
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
       setValue(null);
     }
-  }, [open]);
+  }
 
   const options = React.useMemo(() => {
     const base = categoriesPaths

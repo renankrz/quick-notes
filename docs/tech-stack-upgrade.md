@@ -1,5 +1,21 @@
 # Tech Stack Upgrade Runbook (Phase 2)
 
+> **Status: APPLIED (2026-10-04) on Node 24.21.0.** All upgrades below were
+> performed on the `modernization` branch. Both packages lint clean and the
+> client builds; the server boots and its endpoints + transactions were
+> verified against a live ArangoDB. Actual versions installed:
+>
+> - **Node:** pinned `>=24` (`engines` + `.nvmrc`).
+> - **Server:** arangojs 10, express 5, cors 2.8.6, morgan 1.12; ESLint 9 flat
+>   config (airbnb-base removed, replaced with `@eslint/js` + `eslint-plugin-import`
+>   + `simple-import-sort` + prettier); prettier/nodemon bumped. `dotenv` kept at
+>   16 (v17+ only adds a startup banner).
+> - **Client:** React 19, Vite 8, `@vitejs/plugin-react` 6, MUI 9,
+>   `@mui/x-tree-view` 9 (`SimpleTreeView`), `@tanstack/react-query` 5,
+>   react-markdown 10, react-syntax-highlighter 16, ESLint 9 flat config.
+>
+> The sections below are retained as the reference for *how* it was done.
+
 This machine runs **Node v14**, which is too old to install/build the target versions, and no
 ArangoDB is reachable, so the upgrades below are **not applied automatically**. Follow this
 runbook on a machine with a current Node LTS and a running ArangoDB. Do **one bump per commit**

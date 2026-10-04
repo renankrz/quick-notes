@@ -4,11 +4,10 @@ import AddIcon from '@mui/icons-material/Add';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box, Button, ListItemText, Menu, MenuItem } from '@mui/material';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import CustomTreeItem from './CustomTreeItem';
 
 const CategoriesTree = ({
   categories,
@@ -43,9 +42,9 @@ const CategoriesTree = ({
   };
 
   const renderTree = (node) => (
-    <CustomTreeItem
+    <TreeItem
       key={node.key}
-      nodeId={node.key}
+      itemId={node.key}
       label={
         <Box onContextMenu={(event) => openMenu(event, node)} sx={{ py: 0.25 }}>
           {node.name}
@@ -55,7 +54,7 @@ const CategoriesTree = ({
       {node.children.length > 0
         ? node.children.map((c) => renderTree(c))
         : null}
-    </CustomTreeItem>
+    </TreeItem>
   );
 
   return (
@@ -75,17 +74,19 @@ const CategoriesTree = ({
       >
         add category
       </Button>
-      <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        expanded={expanded}
-        selected={selected}
-        onNodeToggle={handleExpand}
-        onNodeSelect={handleSelect}
+      <SimpleTreeView
+        slots={{
+          collapseIcon: ExpandMoreIcon,
+          expandIcon: ChevronRightIcon,
+        }}
+        expandedItems={expanded}
+        selectedItems={selected}
+        onExpandedItemsChange={handleExpand}
+        onSelectedItemsChange={handleSelect}
         multiSelect
       >
         {categories.map((category) => renderTree(category))}
-      </TreeView>
+      </SimpleTreeView>
       <Menu
         open={menu !== null}
         onClose={closeMenu}
