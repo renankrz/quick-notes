@@ -1,4 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Box,
@@ -18,7 +19,7 @@ import React from 'react';
 
 import Content from './Content';
 
-function Notes({ notes, categoriesPaths, updateNote, deleteNote }) {
+function Notes({ notes, categoriesPaths, updateNote, deleteNote, moveNote }) {
   const [dialogueIsOpen, setDialogueIsOpen] = React.useState(false);
 
   const handleClickDelete = () => {
@@ -91,6 +92,11 @@ function Notes({ notes, categoriesPaths, updateNote, deleteNote }) {
                   <EditIcon />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Move to category">
+                <IconButton onClick={() => moveNote(note)}>
+                  <DriveFileMoveIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Delete">
                 <IconButton onClick={handleClickDelete}>
                   <DeleteIcon />
@@ -133,6 +139,7 @@ Notes.propTypes = {
   ).isRequired,
   updateNote: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
+  moveNote: PropTypes.func.isRequired,
 };
 
 export default Notes;

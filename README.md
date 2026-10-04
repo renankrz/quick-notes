@@ -1,14 +1,15 @@
 # Quick notes
 
 CRUD notes for studying. Supports code syntax highlighting, LaTeX and Markdown.
+Notes are organized in categories arranged as trees (backed by an ArangoDB graph).
 
 ![Quick Notes interface](/screenshot.png?raw=true "Quick Notes interface")
 
 - Usage
-
   - [Code](#code)
   - [LaTeX](#latex)
   - [Markdown](#markdown)
+  - [Managing categories and notes](#managing-categories-and-notes)
 
 - Run
   - [Dev](#dev)
@@ -46,6 +47,39 @@ L = \frac{1}{2} \rho v^2 S C_L
 
 Just enter regular markdown.
 
+## Managing categories and notes
+
+- **Add a category**: the "add category" button above the tree (creates a root), or right-click a
+  category → *Add subcategory*.
+- **Rename / move / delete a category**: right-click the category. Delete is allowed only when the
+  category has no notes and no subcategories (the app explains why if blocked).
+- **Move a note**: the move icon on a note card → pick a target category.
+- **Move all notes / delete all notes** from a category: right-click the category; both ask for
+  confirmation.
+
+See [`docs/decisions.md`](docs/decisions.md) for the exact rules.
+
+## Environment variables
+
+`server/.env` (see `server/.env.example`):
+
+| Var | Purpose |
+|---|---|
+| `ALLOWED_ORIGINS` | comma-separated hostnames allowed by CORS (required) |
+| `CLIENT_PORT` | client port used to build CORS origins (required) |
+| `API_PORT` | port the API listens on (required) |
+| `DB_HOST` / `DB_NAME` / `DB_USER` / `DB_PASS` | ArangoDB connection |
+
+`client/.env` (see `client/.env.example`):
+
+| Var | Purpose |
+|---|---|
+| `VITE_API_HOST` | API host, e.g. `http://localhost` |
+| `VITE_API_PORT` | API port |
+
+The server validates the required variables at startup and fails fast with a clear message if any
+are missing.
+
 ## Dev
 
 Prerequisites:
@@ -54,13 +88,11 @@ Prerequisites:
 - Node.js 14 or greater
 - yarn
 
-1. in ArangoDB, create:
-   1.1) a new database named "quickNotesDB"
-   1.2) a collection named "categories"
-   1.3) a collection named "notes"
-   1.4) an edge collection named "hasSubcategory"
-   1.5) a graph named "categoriesGraph" from "categories" to "categories" with edges "hasSubcategory"
-2. write your own `.env` files for both server and client based on the examples given [here][1] and [here][2].
+1. Write your own `.env` files for both server and client based on the examples given
+   [here][1] and [here][2].
+2. From `server/`, run `yarn && yarn db:setup`. This idempotently creates the `categories` and
+   `notes` collections, the `hasSubcategory` edge collection, the `categoriesGraph` graph, and the
+   index on `notes.categoryKey`.
 
 ### Start the server:
 
