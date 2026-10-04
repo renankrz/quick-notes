@@ -1,20 +1,44 @@
 import './style/App.css';
 
-import { Box, Button, Container, Divider } from '@mui/material';
+import { Alert, Box, Button, Container, Divider, Snackbar } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
 import {
+  createCategory,
+  deleteCategory,
   getCategoriesTree,
   getExpandableCategories,
   getFlattenedCategoriesPaths,
   getSelectableCategories,
+  moveCategory,
+  renameCategory,
 } from '../api/categories-tree';
-import { createNote, deleteNote, getAllNotes, updateNote } from '../api/notes';
+import {
+  createNote,
+  deleteAllNotes,
+  deleteNote,
+  getAllNotes,
+  moveAllNotes,
+  moveNote,
+  updateNote,
+} from '../api/notes';
 import CategoriesTree from './CategoriesTree';
+import CategoryNameDialog from './dialogs/CategoryNameDialog';
+import CategoryPickerDialog from './dialogs/CategoryPickerDialog';
+import ConfirmDialog from './dialogs/ConfirmDialog';
 import Form from './Form';
 import Header from './Header';
 import Notes from './Notes';
+
+// Collect a node's own key plus all descendant keys, for cycle-safe moves.
+const collectKeys = (node) => {
+  const keys = [node.key];
+  (node.children || []).forEach((child) => {
+    keys.push(...collectKeys(child));
+  });
+  return keys;
+};
 
 const App = () => {
   const [interactionMode, setInteractionMode] = React.useState('view');
@@ -22,11 +46,25 @@ const App = () => {
   const [expandedCategories, setExpandedCategories] = React.useState([]);
   const [selectedCategories, setSelectedCategories] = React.useState([]);
   const [rand, setRand] = React.useState(Math.random());
+  const [dialog, setDialog] = React.useState(null);
+  const [snackbar, setSnackbar] = React.useState(null);
   const noteToUpdate = React.useRef(null);
   const expandableNodes = React.useRef([]);
   const selectableNodes = React.useRef([]);
 
   const queryClient = useQueryClient();
+
+  const notify = (message, severity = 'error') =>
+    setSnackbar({ message, severity });
+
+  const invalidateCategories = () => {
+    ['categories-tree', 'expandable-categories', 'selectable-categories', 'flattened-categories-paths'].forEach(
+      (key) => queryClient.invalidateQueries({ queryKey: [key] })
+    );
+    queryClient.invalidateQueries({ queryKey: ['notes'] });
+  };
+
+  const closeDialog = () => setDialog(null);
 
   const queryCategoriesTree = useQuery(['categories-tree'], getCategoriesTree);
 
@@ -79,6 +117,57 @@ const App = () => {
     },
   });
 
+  const makeCategoryMutationOptions = (successMsg) => ({
+    onSuccess: () => {
+      invalidateCategories();
+      if (successMsg) {
+        notify(successMsg, 'success');
+      }
+    },
+    onError: (err) => notify(err.message),
+  });
+
+  const mutationCreateCategory = useMutation(
+    createCategory,
+    makeCategoryMutationOptions('Category created')
+  );
+  const mutationRenameCategory = useMutation(
+    renameCategory,
+    makeCategoryMutationOptions('Category renamed')
+  );
+  const mutationMoveCategory = useMutation(
+    moveCategory,
+    makeCategoryMutationOptions('Category moved')
+  );
+  const mutationDeleteCategory = useMutation(
+    deleteCategory,
+    makeCategoryMutationOptions('Category deleted')
+  );
+
+  const mutationMoveNote = useMutation(moveNote, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      notify('Note moved', 'success');
+    },
+    onError: (err) => notify(err.message),
+  });
+
+  const mutationMoveAllNotes = useMutation(moveAllNotes, {
+    onSuccess: (moved) => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      notify(`Moved ${moved} note(s)`, 'success');
+    },
+    onError: (err) => notify(err.message),
+  });
+
+  const mutationDeleteAllNotes = useMutation(deleteAllNotes, {
+    onSuccess: (deleted) => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      notify(`Deleted ${deleted} note(s)`, 'success');
+    },
+    onError: (err) => notify(err.message),
+  });
+
   const handleExpand = (event, nodeIds) => {
     setExpandedCategories(nodeIds);
   };
@@ -129,6 +218,24 @@ const App = () => {
     mutationUpdateNote.mutate({ key, data });
   };
 
+  // --- Category tree actions (open the relevant dialog) ---
+  const handleAddRoot = () =>
+    setDialog({ type: 'add-root' });
+  const handleAddChild = (node) =>
+    setDialog({ type: 'add-child', node });
+  const handleRenameCategory = (node) =>
+    setDialog({ type: 'rename', node });
+  const handleMoveCategory = (node) =>
+    setDialog({ type: 'move-category', node });
+  const handleDeleteCategory = (node) =>
+    mutationDeleteCategory.mutate(node.key);
+  const handleMoveAllNotes = (node) =>
+    setDialog({ type: 'move-all-notes', node });
+  const handleDeleteAllNotes = (node) =>
+    setDialog({ type: 'delete-all-notes', node });
+  const handleMoveNote = (note) =>
+    setDialog({ type: 'move-note', note });
+
   const chooseRandomNote = () => {
     if (queryNotes.data.length === 0) {
       return [];
@@ -160,6 +267,13 @@ const App = () => {
                 selected={selectedCategories}
                 handleSelect={handleSelect}
                 handleSelectAllClick={handleSelectAllClick}
+                onAddRoot={handleAddRoot}
+                onAddChild={handleAddChild}
+                onRename={handleRenameCategory}
+                onMoveCategory={handleMoveCategory}
+                onDeleteCategory={handleDeleteCategory}
+                onMoveAllNotes={handleMoveAllNotes}
+                onDeleteAllNotes={handleDeleteAllNotes}
               />
             )}
         </Box>
@@ -197,6 +311,7 @@ const App = () => {
                 categoriesPaths={queryFlattenedCategoriesPaths.data}
                 updateNote={handleUpdateNoteIconClick}
                 deleteNote={handleDeleteNoteIconClick}
+                moveNote={handleMoveNote}
               />
             )}
           {interactionMode === 'create' &&
@@ -232,6 +347,96 @@ const App = () => {
           )}
         </Box>
       </Box>
+
+      {/* ---- Category / notes management dialogs ---- */}
+      <CategoryNameDialog
+        open={dialog?.type === 'add-root'}
+        title="Add category"
+        onSubmit={(name) =>
+          mutationCreateCategory.mutate({ name, parentKey: null })
+        }
+        onClose={closeDialog}
+      />
+      <CategoryNameDialog
+        open={dialog?.type === 'add-child'}
+        title={`Add subcategory under "${dialog?.node?.name ?? ''}"`}
+        onSubmit={(name) =>
+          mutationCreateCategory.mutate({ name, parentKey: dialog.node.key })
+        }
+        onClose={closeDialog}
+      />
+      <CategoryNameDialog
+        open={dialog?.type === 'rename'}
+        title="Rename category"
+        initialName={dialog?.node?.name ?? ''}
+        onSubmit={(name) =>
+          mutationRenameCategory.mutate({ key: dialog.node.key, name })
+        }
+        onClose={closeDialog}
+      />
+      <CategoryPickerDialog
+        open={dialog?.type === 'move-category'}
+        title={`Move "${dialog?.node?.name ?? ''}" to…`}
+        categoriesPaths={queryFlattenedCategoriesPaths.data ?? []}
+        excludeKeys={dialog?.node ? collectKeys(dialog.node) : []}
+        allowRoot
+        onSelect={(newParentKey) =>
+          mutationMoveCategory.mutate({ key: dialog.node.key, newParentKey })
+        }
+        onClose={closeDialog}
+      />
+      <CategoryPickerDialog
+        open={dialog?.type === 'move-all-notes'}
+        title={`Move all notes from "${dialog?.node?.name ?? ''}" to…`}
+        categoriesPaths={queryFlattenedCategoriesPaths.data ?? []}
+        excludeKeys={dialog?.node ? [dialog.node.key] : []}
+        onSelect={(toCategoryKey) =>
+          mutationMoveAllNotes.mutate({
+            fromCategoryKey: dialog.node.key,
+            toCategoryKey,
+          })
+        }
+        onClose={closeDialog}
+      />
+      <CategoryPickerDialog
+        open={dialog?.type === 'move-note'}
+        title="Move note to…"
+        categoriesPaths={queryFlattenedCategoriesPaths.data ?? []}
+        excludeKeys={dialog?.note ? [dialog.note.categoryKey] : []}
+        onSelect={(categoryKey) =>
+          mutationMoveNote.mutate({ key: dialog.note.key, categoryKey })
+        }
+        onClose={closeDialog}
+      />
+      <ConfirmDialog
+        open={dialog?.type === 'delete-all-notes'}
+        title="Delete all notes?"
+        message={`This permanently deletes every note directly in "${
+          dialog?.node?.name ?? ''
+        }". This cannot be undone.`}
+        confirmLabel="Delete all"
+        onConfirm={() =>
+          mutationDeleteAllNotes.mutate({ categoryKey: dialog.node.key })
+        }
+        onClose={closeDialog}
+      />
+
+      <Snackbar
+        open={snackbar !== null}
+        autoHideDuration={5000}
+        onClose={() => setSnackbar(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        {snackbar !== null ? (
+          <Alert
+            severity={snackbar.severity}
+            onClose={() => setSnackbar(null)}
+            sx={{ width: '100%' }}
+          >
+            {snackbar.message}
+          </Alert>
+        ) : undefined}
+      </Snackbar>
     </Container>
   );
 };
