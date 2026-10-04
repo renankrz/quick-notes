@@ -90,6 +90,10 @@ const CategoriesTree = ({
         open={menu !== null}
         onClose={closeMenu}
         disableScrollLock
+        autoFocus={false}
+        disableAutoFocus
+        disableAutoFocusItem
+        disableRestoreFocus
         anchorReference="anchorPosition"
         anchorPosition={
           menu !== null ? { top: menu.mouseY, left: menu.mouseX } : undefined
