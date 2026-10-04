@@ -12,6 +12,9 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=24"
+  },
   "dependencies": {
     "arangojs": "^8.4.0",
     "cors": "^2.8.5",
