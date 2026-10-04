@@ -231,29 +231,33 @@ router.get('/paths/', async (req, res, next) => {
 // Category management (RESTful)
 // ----------------------------------------------------------------------------
 
-// Add a category. Body: { name, parentKey? }. Omit parentKey to create a root.
+// Add a category. Body: { name, parentKey? }. When parentKey is omitted, the
+// category is attached to the "root" node so it appears in the tree (the tree
+// is rooted at a dedicated "root" category).
 router.post('/categories', async (req, res, next) => {
   try {
     const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
-    const { parentKey = null } = req.body;
+    let { parentKey = null } = req.body;
     if (!name) {
       throw new HttpError(400, 'A non-empty "name" is required');
     }
-    if (parentKey) {
-      const parent = await getCategoryByKey(parentKey);
-      if (!parent.length) {
-        throw new HttpError(
-          404,
-          'The specified parent category does not exist',
-        );
+    if (!parentKey) {
+      const root = (await getCategoriesByName('root'))[0];
+      if (!root) {
+        throw new HttpError(500, 'The root category is missing');
       }
-      const siblings = await getOutcomingEdges(parentKey);
-      if (siblings.some((e) => e.to.name === name)) {
-        throw new HttpError(
-          409,
-          'A sibling category with that name already exists',
-        );
-      }
+      parentKey = root.key;
+    }
+    const parent = await getCategoryByKey(parentKey);
+    if (!parent.length) {
+      throw new HttpError(404, 'The specified parent category does not exist');
+    }
+    const siblings = await getOutcomingEdges(parentKey);
+    if (siblings.some((e) => e.to.name === name)) {
+      throw new HttpError(
+        409,
+        'A sibling category with that name already exists',
+      );
     }
     const category = await addCategory(name, parentKey);
     res.status(201).json(category);
