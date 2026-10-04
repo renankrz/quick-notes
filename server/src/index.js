@@ -37,7 +37,7 @@ app.use((req, res) => {
 });
 
 // Centralized error handler returning a consistent JSON shape.
-// eslint-disable-next-line no-unused-vars
+
 app.use((err, req, res, next) => {
   const status = err.status || 500;
   if (status >= 500) {

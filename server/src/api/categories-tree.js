@@ -27,7 +27,6 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   const sort = (nodes) => {
-    // eslint-disable-next-line no-param-reassign
     nodes =
       nodes.length > 0
         ? nodes.sort((a, b) => {
