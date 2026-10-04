@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const CategoriesTree = ({
-  categories,
+  categories = [],
   expanded,
   handleExpand,
   handleExpandAllClick,
@@ -145,10 +145,6 @@ CategoriesTree.propTypes = {
   onDeleteCategory: PropTypes.func.isRequired,
   onMoveAllNotes: PropTypes.func.isRequired,
   onDeleteAllNotes: PropTypes.func.isRequired,
-};
-
-CategoriesTree.defaultProps = {
-  categories: [],
 };
 
 export default CategoriesTree;

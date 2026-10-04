@@ -12,7 +12,13 @@ import React from 'react';
 /**
  * Prompt for a category name (used for both "Add" and "Rename").
  */
-function CategoryNameDialog({ open, title, initialName, onSubmit, onClose }) {
+function CategoryNameDialog({
+  open,
+  title,
+  initialName = '',
+  onSubmit,
+  onClose,
+}) {
   const [name, setName] = React.useState(initialName);
   const [wasOpen, setWasOpen] = React.useState(open);
 
@@ -69,10 +75,6 @@ CategoryNameDialog.propTypes = {
   initialName: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-};
-
-CategoryNameDialog.defaultProps = {
-  initialName: '',
 };
 
 export default CategoryNameDialog;

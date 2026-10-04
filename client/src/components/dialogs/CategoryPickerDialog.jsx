@@ -21,8 +21,8 @@ function CategoryPickerDialog({
   open,
   title,
   categoriesPaths,
-  excludeKeys,
-  allowRoot,
+  excludeKeys = [],
+  allowRoot = false,
   onSelect,
   onClose,
 }) {
@@ -93,11 +93,6 @@ CategoryPickerDialog.propTypes = {
   allowRoot: PropTypes.bool,
   onSelect: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-};
-
-CategoryPickerDialog.defaultProps = {
-  excludeKeys: [],
-  allowRoot: false,
 };
 
 export default CategoryPickerDialog;

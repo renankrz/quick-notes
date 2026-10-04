@@ -4,7 +4,13 @@ import { Controller, useForm } from 'react-hook-form';
 
 function Form({
   categoriesPaths,
-  notePrefilledData,
+  notePrefilledData = {
+    categoryKey: '',
+    content: '',
+    key: '',
+    rank: 0,
+    title: '',
+  },
   submit,
   submitButtonText,
 }) {
@@ -131,16 +137,6 @@ Form.propTypes = {
   }),
   submit: PropTypes.func.isRequired,
   submitButtonText: PropTypes.string.isRequired,
-};
-
-Form.defaultProps = {
-  notePrefilledData: {
-    categoryKey: '',
-    content: '',
-    key: '',
-    rank: 0,
-    title: '',
-  },
 };
 
 export default Form;

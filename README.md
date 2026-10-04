@@ -6,7 +6,6 @@ Notes are organized in categories arranged as trees (backed by an ArangoDB graph
 ![Quick Notes interface](/screenshot.png?raw=true "Quick Notes interface")
 
 - Usage
-
   - [Code](#code)
   - [LaTeX](#latex)
   - [Markdown](#markdown)
@@ -15,12 +14,6 @@ Notes are organized in categories arranged as trees (backed by an ArangoDB graph
 - Run
   - [Dev](#dev)
   - [Autostart at system boot with PM2](#autostart-at-system-boot-with-pm2)
-
-- Project docs
-  - [`docs/quality-report.md`](docs/quality-report.md) — code quality audit
-  - [`docs/tech-stack-upgrade.md`](docs/tech-stack-upgrade.md) — dependency upgrade runbook
-  - [`docs/tree-decision.md`](docs/tree-decision.md) — tree component evaluation
-  - [`docs/decisions.md`](docs/decisions.md) — decisions log
 
 ## Code
 

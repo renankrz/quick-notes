@@ -15,8 +15,8 @@ import PropTypes from 'prop-types';
 function ConfirmDialog({
   open,
   title,
-  message,
-  confirmLabel,
+  message = null,
+  confirmLabel = 'Confirm',
   onConfirm,
   onClose,
 }) {
@@ -52,11 +52,6 @@ ConfirmDialog.propTypes = {
   confirmLabel: PropTypes.string,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-};
-
-ConfirmDialog.defaultProps = {
-  message: null,
-  confirmLabel: 'Confirm',
 };
 
 export default ConfirmDialog;
