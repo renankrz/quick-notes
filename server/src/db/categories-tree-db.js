@@ -3,7 +3,9 @@ const { db, withErrorHandling } = require('./common');
 const {
   COLL_CATEGORIES,
   COLL_HAS_SUBCATEGORY,
+  COLL_NOTES,
   GRAPH_CATEGORIES,
+  MAX_TREE_DEPTH,
 } = require('../constants');
 
 const createCategory = (name) =>
@@ -24,7 +26,7 @@ const createCategory = (name) =>
       query,
       bindVars,
     });
-    const vertex = await cursor.all();
+    const [vertex] = await cursor.all();
     return {
       key: vertex._key,
       name: vertex.name,
@@ -379,7 +381,7 @@ const updateEdge = (key, from, to) =>
       query,
       bindVars,
     });
-    const edge = await cursor.all();
+    const [edge] = await cursor.all();
     return {
       key: edge._key,
       from: edge._from.split('/')[1],
@@ -387,18 +389,213 @@ const updateEdge = (key, from, to) =>
     };
   });
 
+/**
+ * Number of direct subcategories of a category.
+ */
+const getChildrenCount = (key) =>
+  withErrorHandling(async () => {
+    const query = `
+      RETURN LENGTH(
+        FOR e IN @@collection
+        FILTER e._from == @from
+        RETURN 1
+      )
+    `;
+    const bindVars = {
+      '@collection': COLL_HAS_SUBCATEGORY,
+      from: `${COLL_CATEGORIES}/${key}`,
+    };
+    const cursor = await db.query({ query, bindVars });
+    const [count] = await cursor.all();
+    return count;
+  });
+
+/**
+ * Number of notes attached directly to a category.
+ */
+const getNotesCount = (key) =>
+  withErrorHandling(async () => {
+    const query = `
+      RETURN LENGTH(
+        FOR n IN @@collection
+        FILTER n.categoryKey == @key
+        RETURN 1
+      )
+    `;
+    const bindVars = {
+      '@collection': COLL_NOTES,
+      key,
+    };
+    const cursor = await db.query({ query, bindVars });
+    const [count] = await cursor.all();
+    return count;
+  });
+
+/**
+ * Keys of all descendants of a category (excluding the category itself).
+ */
+const getDescendantKeys = (key) =>
+  withErrorHandling(async () => {
+    const query = `
+      FOR v IN 1..@maxDepth OUTBOUND @startId GRAPH @graph
+      RETURN DISTINCT v._key
+    `;
+    const bindVars = {
+      maxDepth: MAX_TREE_DEPTH,
+      graph: GRAPH_CATEGORIES,
+      startId: `${COLL_CATEGORIES}/${key}`,
+    };
+    const cursor = await db.query({ query, bindVars });
+    return cursor.all();
+  });
+
+/**
+ * Create a category and, when a parent is given, the edge linking it, in a
+ * single stream transaction so a failure cannot leave an orphan vertex/edge.
+ */
+const addCategory = (name, parentKey) =>
+  withErrorHandling(async () => {
+    const trx = await db.beginTransaction({
+      write: [COLL_CATEGORIES, COLL_HAS_SUBCATEGORY],
+    });
+    try {
+      const [vertex] = await trx.step(() =>
+        db
+          .query({
+            query: `INSERT { name: @name } IN @@collection RETURN NEW`,
+            bindVars: { '@collection': COLL_CATEGORIES, name },
+          })
+          .then((c) => c.all()),
+      );
+      if (parentKey) {
+        await trx.step(() =>
+          db.query({
+            query: `INSERT { _from: @from, _to: @to } IN @@collection`,
+            bindVars: {
+              '@collection': COLL_HAS_SUBCATEGORY,
+              from: `${COLL_CATEGORIES}/${parentKey}`,
+              to: `${COLL_CATEGORIES}/${vertex._key}`,
+            },
+          }),
+        );
+      }
+      await trx.commit();
+      return {
+        key: vertex._key,
+        name: vertex.name,
+        parentKey: parentKey || null,
+      };
+    } catch (err) {
+      await trx.abort();
+      throw err;
+    }
+  });
+
+/**
+ * Rename a category.
+ */
+const renameCategory = (key, name) =>
+  withErrorHandling(async () => {
+    const query = `
+      UPDATE @key WITH { name: @name } IN @@collection
+      RETURN NEW
+    `;
+    const bindVars = { '@collection': COLL_CATEGORIES, key, name };
+    const cursor = await db.query({ query, bindVars });
+    const [vertex] = await cursor.all();
+    return { key: vertex._key, name: vertex.name };
+  });
+
+/**
+ * Delete a category and its incoming edge in one transaction. Callers must have
+ * already verified it has no notes and no subcategories.
+ */
+const deleteCategory = (key) =>
+  withErrorHandling(async () => {
+    const trx = await db.beginTransaction({
+      write: [COLL_CATEGORIES, COLL_HAS_SUBCATEGORY],
+    });
+    try {
+      await trx.step(() =>
+        db.query({
+          query: `FOR e IN @@collection FILTER e._to == @to REMOVE e IN @@collection`,
+          bindVars: {
+            '@collection': COLL_HAS_SUBCATEGORY,
+            to: `${COLL_CATEGORIES}/${key}`,
+          },
+        }),
+      );
+      await trx.step(() =>
+        db.query({
+          query: `REMOVE @key IN @@collection`,
+          bindVars: { '@collection': COLL_CATEGORIES, key },
+        }),
+      );
+      await trx.commit();
+      return { key };
+    } catch (err) {
+      await trx.abort();
+      throw err;
+    }
+  });
+
+/**
+ * Move a category under a new parent (or to the root when `newParentKey` is
+ * null): remove any existing incoming edge, then insert the new one. The
+ * cycle/no-op/existence checks are done by the caller.
+ */
+const moveCategory = (key, newParentKey) =>
+  withErrorHandling(async () => {
+    const trx = await db.beginTransaction({ write: [COLL_HAS_SUBCATEGORY] });
+    try {
+      await trx.step(() =>
+        db.query({
+          query: `FOR e IN @@collection FILTER e._to == @to REMOVE e IN @@collection`,
+          bindVars: {
+            '@collection': COLL_HAS_SUBCATEGORY,
+            to: `${COLL_CATEGORIES}/${key}`,
+          },
+        }),
+      );
+      if (newParentKey) {
+        await trx.step(() =>
+          db.query({
+            query: `INSERT { _from: @from, _to: @to } IN @@collection`,
+            bindVars: {
+              '@collection': COLL_HAS_SUBCATEGORY,
+              from: `${COLL_CATEGORIES}/${newParentKey}`,
+              to: `${COLL_CATEGORIES}/${key}`,
+            },
+          }),
+        );
+      }
+      await trx.commit();
+      return { key, parentKey: newParentKey || null };
+    } catch (err) {
+      await trx.abort();
+      throw err;
+    }
+  });
+
 module.exports = {
+  addCategory,
   createCategory,
   createEdge,
+  deleteCategory,
   getAllCategories,
   getCategoriesByName,
   getCategoryByKey,
+  getChildrenCount,
+  getDescendantKeys,
   getExpandableCategories,
   getEdgeByKey,
   getIncomingEdges,
+  getNotesCount,
   getOutcomingEdges,
   getPaths,
   getPathsFlattened,
   getTree,
+  moveCategory,
+  renameCategory,
   updateEdge,
 };

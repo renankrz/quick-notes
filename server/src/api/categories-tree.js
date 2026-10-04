@@ -1,19 +1,27 @@
 const { Router } = require('express');
 const {
+  addCategory,
   createCategory,
   createEdge,
+  deleteCategory,
   getAllCategories,
   getCategoriesByName,
   getCategoryByKey,
+  getChildrenCount,
+  getDescendantKeys,
   getExpandableCategories,
   getEdgeByKey,
   getIncomingEdges,
+  getNotesCount,
   getOutcomingEdges,
   getPaths,
   getPathsFlattened,
   getTree,
+  moveCategory,
+  renameCategory,
   updateEdge,
 } = require('../db/categories-tree-db');
+const { HttpError } = require('../http-error');
 
 const router = Router();
 
@@ -214,6 +222,123 @@ router.get('/paths/', async (req, res, next) => {
       return;
     }
     res.json(vertices);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ----------------------------------------------------------------------------
+// Category management (RESTful)
+// ----------------------------------------------------------------------------
+
+// Add a category. Body: { name, parentKey? }. Omit parentKey to create a root.
+router.post('/categories', async (req, res, next) => {
+  try {
+    const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+    const { parentKey = null } = req.body;
+    if (!name) {
+      throw new HttpError(400, 'A non-empty "name" is required');
+    }
+    if (parentKey) {
+      const parent = await getCategoryByKey(parentKey);
+      if (!parent.length) {
+        throw new HttpError(
+          404,
+          'The specified parent category does not exist',
+        );
+      }
+      const siblings = await getOutcomingEdges(parentKey);
+      if (siblings.some((e) => e.to.name === name)) {
+        throw new HttpError(
+          409,
+          'A sibling category with that name already exists',
+        );
+      }
+    }
+    const category = await addCategory(name, parentKey);
+    res.status(201).json(category);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Rename a category. Body: { name }.
+router.patch('/categories/:key', async (req, res, next) => {
+  try {
+    const { key } = req.params;
+    const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+    if (!name) {
+      throw new HttpError(400, 'A non-empty "name" is required');
+    }
+    const existing = await getCategoryByKey(key);
+    if (!existing.length) {
+      throw new HttpError(404, 'Category not found');
+    }
+    const category = await renameCategory(key, name);
+    res.json(category);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Move a category under a new parent (or to the root). Body: { newParentKey|null }.
+router.patch('/categories/:key/parent', async (req, res, next) => {
+  try {
+    const { key } = req.params;
+    const { newParentKey = null } = req.body;
+    const existing = await getCategoryByKey(key);
+    if (!existing.length) {
+      throw new HttpError(404, 'Category not found');
+    }
+    if (newParentKey) {
+      if (newParentKey === key) {
+        throw new HttpError(400, 'A category cannot be its own parent');
+      }
+      const parent = await getCategoryByKey(newParentKey);
+      if (!parent.length) {
+        throw new HttpError(
+          404,
+          'The specified parent category does not exist',
+        );
+      }
+      const descendantKeys = await getDescendantKeys(key);
+      if (descendantKeys.includes(newParentKey)) {
+        throw new HttpError(
+          400,
+          'A category cannot be moved under one of its own descendants',
+        );
+      }
+    }
+    const result = await moveCategory(key, newParentKey);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Delete a category. Allowed only when it has no notes and no subcategories.
+router.delete('/categories/:key', async (req, res, next) => {
+  try {
+    const { key } = req.params;
+    const existing = await getCategoryByKey(key);
+    if (!existing.length) {
+      throw new HttpError(404, 'Category not found');
+    }
+    const [notesCount, childrenCount] = await Promise.all([
+      getNotesCount(key),
+      getChildrenCount(key),
+    ]);
+    if (notesCount > 0) {
+      throw new HttpError(409, 'Cannot delete a category that still has notes');
+    }
+    if (childrenCount > 0) {
+      throw new HttpError(
+        409,
+        'Cannot delete a category that still has subcategories',
+      );
+    }
+    const result = await deleteCategory(key);
+    res.json(result);
   } catch (error) {
     next(error);
   }

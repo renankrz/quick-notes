@@ -62,20 +62,20 @@ const App = () => {
   const mutationCreateNote = useMutation(createNote, {
     onSuccess: () => {
       setInteractionMode('view');
-      queryClient.invalidateQueries('notes');
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 
   const mutationUpdateNote = useMutation(updateNote, {
     onSuccess: () => {
       setInteractionMode('view');
-      queryClient.invalidateQueries('notes');
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 
   const mutationDeleteNote = useMutation(deleteNote, {
     onSuccess: () => {
-      queryClient.invalidateQueries('notes');
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
   });
 

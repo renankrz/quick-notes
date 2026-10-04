@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
+    "db:setup": "node src/db/setup.js",
     "lint": "yarn eslint . --ext .js",
     "lint-fix": "yarn lint --fix",
     "start": "node src/index.js"
